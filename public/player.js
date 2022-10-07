@@ -4,6 +4,7 @@ class Player {
     this.pos = createVector(x, y, z);
     this.vel = createVector(0, 0, 0);
     this.looking = createVector(0, 1); //x, z
+    this.groundedS = 50;
   }
 
   render() {
@@ -49,6 +50,19 @@ class Player {
       vx = 0;
     }
 
+    if (keyIsDown(32) && this.groundedS > 0) {
+      vy = -3;
+    }
+    else{
+      if(this.groundedS == 50){
+        vy = 0;
+      }
+      else{
+        this.groundedS = 0;
+        vy = 3;
+      }
+    }
+
     if(last_vx !== vx || last_vy !== vy || last_vz !== vz){
       socket.emit("changeVelocity", {
         vx: vx, vy: vy, vz: vz
@@ -62,6 +76,12 @@ class Player {
 
   move(){
     this.pos.add(this.vel);
+    if(this.pos.y >= -50){
+      this.groundedS = 50;
+    }
+    else{
+      this.groundedS -= 1;
+    }
   }
 
   pan(amount){
