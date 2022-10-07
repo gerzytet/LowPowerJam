@@ -77,7 +77,7 @@ function newConnection(socket) {
 
   function Disconnect() {
     var player = socket.id;
-    console.log("disconnect");
+    console.log("disconnect " + player);
     events.push({ type: "Disconnect", id: player });
   }
 }

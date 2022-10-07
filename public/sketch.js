@@ -124,7 +124,7 @@ function setup() {
 
       if (data.events[i].type === "Disconnect") {
         for (let j = 0; j < players.length; j++) {
-          if(players[j].id === data.events[i].data.id){
+          if(players[j].id === data.events[i].id){
             players.splice(j, 1);
           }
         }
