@@ -70,7 +70,8 @@ function setup() {
 
   cam = createCamera();
   normalMaterial();
-  perspective();
+  let eyeZ = ((height/2) / tan(PI/6));
+  perspective(PI/3, width/height, eyeZ/10 - 20, eyeZ*10);
 
   socket.emit("join");
 
