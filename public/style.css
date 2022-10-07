@@ -5,8 +5,11 @@ body {
   .no-bar {
     display: none;
   }
-  #cursor1 {
+  .canvasUI{
+    z-index: 10;
     position: fixed;
+  }
+  #cursor1 {
     top: 50%;
     left: 50%;
     width: 30px;
@@ -14,10 +17,8 @@ body {
     margin-left: -15px;
     margin-top: -1px;
     background: white;
-    z-index: 10;
   }
   #cursor2 {
-    position: fixed;
     top: 50%;
     left: 50%;
     width: 2px;
@@ -25,5 +26,4 @@ body {
     margin-left: -1px;
     margin-top: -15px;
     background: white;
-    z-index: 10;
   }
