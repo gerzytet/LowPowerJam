@@ -1,52 +1,72 @@
 class Player {
-  constructor(x, y, z, w, h) {
-    this.x = x;
-    this.y = y;
-    this.z = z;
-
-    this.w = w;
-    this.h = h;
-
-    this.velx = 0;
-
-    this.vely = 0;
-
-    this.velz = 0;
-    this.depth = 2;
-    this.speed = 1;
-  }
-
-  update() {
-    if (keyIsDown(87)) {
-      this.velz = -1;
-    } else if (keyIsDown(83)) {
-      this.velz = 1;
-    } else {
-      this.velz = 0;
-    }
-    if (keyIsDown(68)) {
-      this.velx = 1;
-    } else if (keyIsDown(65)) {
-      this.velx = -1;
-    } else {
-      this.velx = 0;
-    }
-
-    this.x += this.velx * this.speed;
-
-    this.y += this.vely * this.speed;
-
-    this.z += this.velz * this.speed;
-
-    this.render();
+  constructor(id, x, y, z) {
+    this.id = id;
+    this.pos = createVector(x, y, z);
+    this.vel = createVector(0, 0, 0);
+    this.looking = createVector(0, 1); //x, z
   }
 
   render() {
-    noStroke();
-    fill(50);
+    this.doInput();
+    this.move();
     push();
-    translate(this.x, this.y, this.z - 3);
-    box(this.w * 10, this.h * 10, this.depth * 10);
+    translate(this.pos);
+    rotateY(-1*this.looking.heading());
+    fill(255, 0, 0);
+    stroke(255);
+    box(50);
     pop();
+
+    push();
+    translate(this.pos.x+(this.looking.x*25), this.pos.y, this.pos.z+(this.looking.y*25));
+    fill(0);
+    sphere(10);
+    pop();
+  }
+
+  myView(){
+    cam.setPosition(this.pos.x, this.pos.y, this.pos.z);
+    cam.lookAt(this.pos.x + this.looking.x, this.pos.y, this.pos.z + this.looking.y);
+  }
+
+  doInput() {
+    let vx = 0;
+    let vy = 0;
+    let vz = 0;
+
+    if (keyIsDown(87)) {
+      vz = 3;
+    } else if (keyIsDown(83)) {
+      vz = -3;
+    } else {
+      vz = 0;
+    }
+    if (keyIsDown(68)) {
+      vx = -3;
+    } else if (keyIsDown(65)) {
+      vx = 3;
+    } else {
+      vx = 0;
+    }
+
+    if(last_vx !== vx || last_vy !== vy || last_vz !== vz){
+      socket.emit("changeVelocity", {
+        vx: vx, vy: vy, vz: vz
+      });
+    }
+
+    last_vx = vx;
+    last_vy = vy;
+    last_vz = vz;
+  }
+
+  move(){
+    this.pos.add(this.vel);
+  }
+
+  pan(amount){
+    socket.emit("changeAngle", {
+      angle: amount
+    });
   }
 }
