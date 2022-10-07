@@ -175,6 +175,7 @@ function doCollision() {
     for (var j = 0; j < players.length; j++) {
       if (projectiles[i].owner != players[j].id && projectiles[i].getCollider().isColliding(players[j].getCollider())) {
         projectiles.splice(i, 1)
+        players[j].damage(projectileDamage)
         i--
       }
     }

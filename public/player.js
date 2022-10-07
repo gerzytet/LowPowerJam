@@ -1,13 +1,16 @@
 const playerSize = 50
-const bulletSpeed = 4
+const projectileSpeed = 4
+const playerMaxHealth = 100
+const projectileDamage = 20
 
 class Player {
   constructor(id, x, y, z) {
-    this.id = id;
-    this.pos = createVector(x, y, z);
-    this.vel = createVector(0, 0, 0);
-    this.looking = createVector(0, 0, 1); //x, z
-    this.groundedS = 50;
+    this.id = id
+    this.pos = createVector(x, y, z)
+    this.vel = createVector(0, 0, 0)
+    this.looking = createVector(0, 0, 1) //x, z
+    this.groundedS = 50
+    this.health = playerMaxHealth
 
     this.last_vx = 0
     this.last_vy = 0
@@ -17,17 +20,17 @@ class Player {
   render() {
     this.doInput();
     push();
-    translate(this.pos);
-    rotateY(-1*this.get2dLooking().heading());
-    fill(255, 0, 0);
-    stroke(255);
-    box(playerSize);
+      translate(this.pos);
+      rotateY(-1*this.get2dLooking().heading());
+      fill(255 * (this.health / playerMaxHealth), 0, 0);
+      stroke(255);
+      box(playerSize);
     pop();
 
     push();
-    translate(this.pos.x+(this.looking.x*25), this.pos.y, this.pos.z+(this.looking.z*25));
-    fill(0);
-    sphere(10);
+      translate(this.pos.x+(this.looking.x*25), this.pos.y, this.pos.z+(this.looking.z*25));
+      fill(0);
+      sphere(10);
     pop();
   }
 
@@ -145,10 +148,17 @@ class Player {
   }
 
   getShootProjectile() {
-    return new Projectile(this.pos.copy(), this.looking.copy().mult(bulletSpeed), this.id)
+    return new Projectile(this.pos.copy(), this.looking.copy().mult(projectileSpeed), this.id)
   }
 
   getCollider() {
     return new SphereCollider(this.pos.copy(), playerSize * 0.8)
+  }
+
+  damage(amount) {
+    this.health -= amount
+    if (this.health <= 0) {
+      this.health = playerMaxHealth
+    }
   }
 }
