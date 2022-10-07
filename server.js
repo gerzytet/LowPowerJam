@@ -81,11 +81,14 @@ function newConnection(socket) {
         return i
       }
     }
+
+    return -1
   }
 
   function changeVelocity(data) {
     let player = socket.id;
     let lobbyIndex = getLobbyIndex(player)
+    if (lobbyIndex === -1) return
     events[lobbyIndex].push({
       type: "PlayerChangeVelocity",
       id: player,
@@ -98,12 +101,14 @@ function newConnection(socket) {
   function changeAngle(data) {
     let player = socket.id;
     let lobbyIndex = getLobbyIndex(player)
+    if (lobbyIndex === -1) return
     events[lobbyIndex].push({ type: "PlayerChangeAngle", id: player, panAngle: data.panAngle, tiltAngle: data.tiltAngle })
   }
 
   function playerJoin() {
     let player = socket.id;
     let lobbyIndex = getLobbyIndex(player)
+    if (lobbyIndex === -1) return
     events[lobbyIndex].push({ type: "PlayerJoin", id: player });
   }
 
@@ -121,6 +126,7 @@ function newConnection(socket) {
   function shoot() {
     let player = socket.id;
     let lobbyIndex = getLobbyIndex(player)
+    if (lobbyIndex === -1) return
     events[lobbyIndex].push({ type: "shoot", id: player });
   }
 

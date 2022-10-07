@@ -24,4 +24,8 @@ class Projectile {
   getCollider() {
     return new SphereCollider(this.pos.copy(), projectileSize);
   }
+
+  isDespawned() {
+    return this.pos.y > 0;
+  }
 }

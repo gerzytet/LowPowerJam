@@ -178,7 +178,12 @@ function updateGamestate() {
     players[i].move()
   }
   for (var i = 0; i < projectiles.length; i++) {
-    projectiles[i].move()
+    if (projectiles[i].isDespawned()) {
+      projectiles.splice(i, 1)
+      i--
+    } else {
+      projectiles[i].move()
+    }
   }
 
   doCollision()
@@ -316,7 +321,7 @@ function drawLobbySelect() {
     let x = 10
     let y = 30
     for (var i = 0; i < lobbies.length; i++) {
-      text("Lobby " + (i + 1) + ": " + lobbies[i].players.length + " players", x, y)
+      text("Lobby " + (i + 1) + ": " + lobbies[i].players.length + " players. " + (lobbies[i].status == LOBBY_STARTED ? "started" : "not started"), x, y)
       y += 32
     }
     text("Press 1 to join lobby 1, 2 to join lobby 2, etc.", x, y)
