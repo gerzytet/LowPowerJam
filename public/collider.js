@@ -11,4 +11,12 @@ class SphereCollider {
         }
         return false
     }
+
+    render() {
+        push()
+            fill(191, 0, 230, 100)
+            translate(this.pos)
+            sphere(this.size)
+        pop()
+    }
 }

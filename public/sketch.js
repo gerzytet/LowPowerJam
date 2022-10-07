@@ -25,10 +25,12 @@ const GAME = 2
 const MAIN_MENU = 3
 let menuState = MAIN_MENU
 let myLobbyIndex = -1
+const renderColliders = true
 
 /******GAMESTATE ZONE*****/
 let players = []
 let projectiles = []
+let kitchens = []
 /******GAMESTATE ZONE*****/
 
 
@@ -56,13 +58,25 @@ document.addEventListener(
   false
 );
 
+function findPlayer(id) {
+  for (let i = 0; i < players.length; i++) {
+    if (socket.id === players[i].id) {
+      return players[i]
+    }
+  }
+}
+
 //mouse click
 function mousePressed() {
   if (menuState === GAME) {
     if (!pointerLock) {
       document.getElementById("sketch-container").requestPointerLock();
     } else {
-      socket.emit('shoot', {})
+      let player = findPlayer(socket.id)
+      if (player.canShoot()) {
+        socket.emit('shoot', {})
+        player.ammo--
+      }
     }
   }
 }
@@ -71,11 +85,7 @@ function mouseMoved(event) {
   //positive movementX is right
   //positive movementY is down
   if (pointerLock) {
-    for (let i = 0; i < players.length; i++) {
-      if (socket.id === players[i].id) {
-        players[i].pan(event.movementX / 1000, event.movementY / 1000);
-      }
-    }
+    findPlayer(socket.id).pan(event.movementX / 1000, event.movementY / 1000);
   }
 }
 
@@ -225,6 +235,8 @@ function setupGame() {
   let eyeZ = ((height/2) / tan(PI/6));
   //perspective(PI/3, width/height, eyeZ/10 - 20, eyeZ*10);
   perspective()
+
+  kitchens.push(new HealthKitchen(createVector(100, 0, 100)), new TomatoKitchen(createVector(-100, 0, -100)))
 }
 
 function drawGame() {
@@ -242,12 +254,27 @@ function drawGame() {
     if (socket.id === players[i].id) {
       players[i].myView();
     }
+    if (renderColliders) {
+      players[i].getCollider().render()
+    }
     players[i].render();
   }
 
   for (var i = 0; i < projectiles.length; i++) {
+    if (renderColliders) {
+      projectiles[i].getCollider().render()
+    }
     projectiles[i].render()
   }
+
+  for (var i = 0; i < kitchens.length; i++) {
+    if (renderColliders) {
+      kitchens[i].getCollider().render()
+    }
+    kitchens[i].render()
+  }
+
+
   debugMode();
 
   push();

@@ -11,6 +11,7 @@ class Player {
     this.looking = createVector(0, 0, 1) //x, z
     this.groundedS = 50
     this.health = playerMaxHealth
+    this.ammo = 10
 
     this.last_vx = 0
     this.last_vy = 0
@@ -160,5 +161,9 @@ class Player {
     if (this.health <= 0) {
       this.health = playerMaxHealth
     }
+  }
+
+  canShoot() {
+    return this.ammo > 0
   }
 }
