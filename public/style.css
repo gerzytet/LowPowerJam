@@ -1,0 +1,29 @@
+body {
+    padding: 20px;
+  }
+
+  .no-bar {
+    display: none;
+  }
+  #cursor1 {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 30px;
+    height: 2px;
+    margin-left: -15px;
+    margin-top: -1px;
+    background: white;
+    z-index: 10;
+  }
+  #cursor2 {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 2px;
+    height: 30px;
+    margin-left: -1px;
+    margin-top: -15px;
+    background: white;
+    z-index: 10;
+  }
