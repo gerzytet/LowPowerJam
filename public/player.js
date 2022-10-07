@@ -3,7 +3,7 @@ class Player {
     this.id = id;
     this.pos = createVector(x, y, z);
     this.vel = createVector(0, 0, 0);
-    this.looking = createVector(0, 1); //x, z
+    this.looking = createVector(0, 0, 1); //x, z
     this.groundedS = 50;
   }
 
@@ -12,14 +12,14 @@ class Player {
     this.move();
     push();
     translate(this.pos);
-    rotateY(-1*this.looking.heading());
+    rotateY(-1*this.get2dLooking().heading());
     fill(255, 0, 0);
     stroke(255);
     box(50);
     pop();
 
     push();
-    translate(this.pos.x+(this.looking.x*25), this.pos.y, this.pos.z+(this.looking.y*25));
+    translate(this.pos.x+(this.looking.x*25), this.pos.y, this.pos.z+(this.looking.z*25));
     fill(0);
     sphere(10);
     pop();
@@ -27,7 +27,7 @@ class Player {
 
   myView(){
     cam.setPosition(this.pos.x, this.pos.y, this.pos.z);
-    cam.lookAt(this.pos.x + this.looking.x, this.pos.y, this.pos.z + this.looking.y);
+    cam.lookAt(this.pos.x + this.looking.x, this.pos.y + this.looking.y, this.pos.z + this.looking.z);
   }
 
   doInput() {
@@ -43,9 +43,9 @@ class Player {
       vz = 0;
     }
     if (keyIsDown(68)) {
-      vx = -3;
-    } else if (keyIsDown(65)) {
       vx = 3;
+    } else if (keyIsDown(65)) {
+      vx = -3;
     } else {
       vx = 0;
     }
@@ -74,8 +74,22 @@ class Player {
     last_vz = vz;
   }
 
+  get2dLooking() {
+    let newLookingVector = createVector(this.looking.x, this.looking.z);
+		newLookingVector.normalize()
+    return newLookingVector
+  }
+
   move(){
-    this.pos.add(this.vel);
+		let newLookingVector = this.get2dLooking()
+		let zAxis = newLookingVector
+		let xAxis = zAxis.copy()
+		xAxis.rotate(PI/2)
+		xAxis.mult(this.vel.x)
+		zAxis.mult(this.vel.z)
+		this.pos.x += xAxis.x + zAxis.x
+		this.pos.z += xAxis.y + zAxis.y
+
     if(this.pos.y >= -50){
       this.groundedS = 50;
     }
@@ -88,5 +102,17 @@ class Player {
     socket.emit("changeAngle", {
       angle: amount
     });
+  }
+
+  panCamera(angle) {
+    //cam.pan(angle)
+    angle = -angle
+
+    //rotate the looking vector on y axis
+    let newLooking = createVector(0, 0, 0)
+    newLooking.x = this.looking.x * cos(angle) + this.looking.z * sin(angle)
+    newLooking.y = this.looking.y
+    newLooking.z = this.looking.x * -sin(angle) + this.looking.z * cos(angle)
+    this.looking = newLooking
   }
 }

@@ -114,10 +114,10 @@ function setup() {
           }
         }
       }
-      if (data.events[i].type === "PlayerChangeAngle") {
+      if (data.events[i].type === "PlayerChangeAngle") {  //panning only
         for (let j = 0; j < players.length; j++) {
           if (data.events[i].id === players[j].id) {
-            players[j].looking.rotate(data.events[i].angle);
+            players[j].panCamera(data.events[i].angle);
           }
         }
       }

@@ -15,14 +15,13 @@ app.use(express.static("public"));
 
 console.log("My server is running");
 
-/*
-var io = new Server(server, {
+var io = new socket.Server(server, {
     cors: {
         origin: "*"
     }
 })
-*/
-var io = socket(server);
+
+//var io = socket(server);
 
 io.sockets.on("connection", newConnection);
 
