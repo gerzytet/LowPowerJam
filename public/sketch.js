@@ -18,10 +18,12 @@ let last_vy
 let last_vz
 
 const NUM_LOBBIES = 6
+
 const LOBBY_SELECT = 0
 const LOBBY = 1
 const GAME = 2
-let menuState = LOBBY_SELECT
+const MAIN_MENU = 3
+let menuState = MAIN_MENU
 let myLobbyIndex = -1
 
 /******GAMESTATE ZONE*****/
@@ -168,7 +170,7 @@ function setup() {
     setupGame()
   })
 
-  setupLobbySelect()
+  setupMainMenu()
 }
 
 function updateGamestate() {
@@ -201,6 +203,8 @@ function draw() {
     drawLobby()
   } else if (menuState == GAME) {
     drawGame()
+  } else if (menuState == MAIN_MENU) {
+    drawMainMenu()
   } else {
     throw new Error("Invalid menu state")
   }
@@ -320,4 +324,28 @@ function drawLobbySelect() {
   pop()
 
   doLobbySelectInput()
+}
+
+function setupMainMenu() {
+  cnv = createCanvas(20, 20);
+  cnv.parent("sketch-container");
+  windowResized();
+}
+
+function doMainMenuInput() {
+  if (keyIsDown("S".charCodeAt())) {
+    menuState = LOBBY_SELECT
+    setupLobbySelect()
+  }
+}
+
+function drawMainMenu() {
+  push()
+    background(100);
+    textSize(32)
+    text("Main menu", 10, 30)
+    text("Press s to start", 10, 70)
+  pop()
+
+  doMainMenuInput()
 }
