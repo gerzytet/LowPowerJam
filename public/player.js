@@ -25,6 +25,25 @@ class Player {
     pop();
   }
 
+  tiltCamera(angle) {
+    //cam.tilt(angle)
+
+    let looking2d = this.get2dLooking()
+    let y = this.looking.y
+    let x = sqrt(1 - y * y)
+    let tempLooking = createVector(x, y)
+    tempLooking.rotate(angle)
+    console.log(angle)
+    looking2d.mult(tempLooking.x)
+    this.looking = createVector(looking2d.x, tempLooking.y, looking2d.y)
+
+    //newLooking.x = this.looking.x
+    //newLooking.y = this.looking.y * cos(angle) - this.looking.z * sin(angle)
+    //newLooking.z = this.looking.y * sin(angle) + this.looking.z * cos(angle)
+    //this.looking = newLooking
+	  //console.log(this.looking)
+  }
+
   myView(){
     cam.setPosition(this.pos.x, this.pos.y, this.pos.z);
     cam.lookAt(this.pos.x + this.looking.x, this.pos.y + this.looking.y, this.pos.z + this.looking.z);
@@ -98,15 +117,17 @@ class Player {
     }
   }
 
-  pan(amount){
+  pan(panAmount, tiltAmount){
     socket.emit("changeAngle", {
-      angle: amount
+      panAngle: panAmount,
+      tiltAngle: tiltAmount
     });
   }
 
-  panCamera(angle) {
+  panCamera(panAmount, tiltAmount) {
+    this.tiltCamera(tiltAmount)
     //cam.pan(angle)
-    angle = -angle
+    let angle = -panAmount
 
     //rotate the looking vector on y axis
     let newLooking = createVector(0, 0, 0)

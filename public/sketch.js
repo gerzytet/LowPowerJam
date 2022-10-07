@@ -55,7 +55,7 @@ function mouseMoved(event) {
   if (pointerLock) {
     for (let i = 0; i < players.length; i++) {
       if (socket.id === players[i].id) {
-        players[i].pan(event.movementX / 1000);
+        players[i].pan(event.movementX / 1000, event.movementY / 1000);
       }
     }
   }
@@ -117,7 +117,7 @@ function setup() {
       if (data.events[i].type === "PlayerChangeAngle") {  //panning only
         for (let j = 0; j < players.length; j++) {
           if (data.events[i].id === players[j].id) {
-            players[j].panCamera(data.events[i].angle);
+            players[j].panCamera(data.events[i].panAngle, data.events[i].tiltAngle);
           }
         }
       }

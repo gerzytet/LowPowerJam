@@ -63,7 +63,7 @@ function newConnection(socket) {
 
   function changeAngle(data) {
     var player = socket.id;
-    events.push({ type: "PlayerChangeAngle", id: player, angle: data.angle });
+    events.push({ type: "PlayerChangeAngle", id: player, panAngle: data.panAngle, tiltAngle: data.tiltAngle })
   }
 
   function playerJoin() {
