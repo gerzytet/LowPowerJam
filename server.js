@@ -47,6 +47,7 @@ function newConnection(socket) {
   socket.on("changeAngle", changeAngle);
   socket.on("join", playerJoin);
   socket.on("catchUpNewPlayer", catchUpNewPlayer);
+  socket.on('shoot', shoot)
 
   socket.on("disconnect", Disconnect);
 
@@ -72,12 +73,17 @@ function newConnection(socket) {
   }
 
   function catchUpNewPlayer(data) {
-    events.push({ type: "CatchingUpNewPlayer", players: data.players });
+    events.push({ type: "CatchingUpNewPlayer", players: data.players, projectiles: data.projectiles });
   }
 
   function Disconnect() {
     var player = socket.id;
     console.log("disconnect " + player);
     events.push({ type: "Disconnect", id: player });
+  }
+
+  function shoot() {
+    var player = socket.id;
+    events.push({ type: "shoot", id: player });
   }
 }

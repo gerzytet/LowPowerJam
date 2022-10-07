@@ -17,7 +17,11 @@ let last_vx;
 let last_vy;
 let last_vz;
 
-let players = [];
+/******GAMESTATE ZONE*****/
+let players = []
+let projectiles = []
+/******GAMESTATE ZONE*****/
+
 let playersLastLength = 1;
 
 function windowResized() {
@@ -46,6 +50,8 @@ function mousePressed() {
   console.log("mouse");
   if (!pointerLock) {
     document.getElementById("sketch-container").requestPointerLock();
+  } else {
+    socket.emit('shoot', {})
   }
 }
 
@@ -70,9 +76,12 @@ function setup() {
 
   cam = createCamera();
   normalMaterial();
-  perspective();
-
+  let eyeZ = ((height/2) / tan(PI/6));
+  //perspective(PI/3, width/height, eyeZ/10 - 20, eyeZ*10);
+  perspective()
   socket.emit("join");
+
+  projectiles.push(new Projectile(createVector(30, 30, 30), createVector(0, 0, 0)))
 
   socket.on("tick", function (data) {
     for (let i = 0; i < data.events.length; i++) {
@@ -103,6 +112,13 @@ function setup() {
           );
           players.push(tempP);
         }
+        for (let j = 0; j < data.events[i].projectiles.length; j++) {
+          let dataProjectile = data.events[i].projectiles[j]
+          let pos = createVector(dataProjectile.pos.x, dataProjectile.pos.y, dataProjectile.pos.z)
+          let vel = createVector(dataProjectile.vel.x, dataProjectile.vel.y, dataProjectile.vel.z)
+          projectiles.push(new Projectile(pos, vel))
+        }
+
         console.log(players);
       }
       if (data.events[i].type === "PlayerChangeVelocity") {
@@ -129,8 +145,40 @@ function setup() {
           }
         }
       }
+
+      if (data.events[i].type === 'shoot') {
+        for (let j = 0; j < players.length; j++) {
+          if(players[j].id === data.events[i].id){
+            projectiles.push(players[j].getShootProjectile())
+          }
+        }
+      }
     }
+
+    updateGamestate()
   });
+}
+
+function updateGamestate() {
+  for (var i = 0; i < players.length; i++) {
+    players[i].move()
+  }
+  for (var i = 0; i < projectiles.length; i++) {
+    projectiles[i].move()
+  }
+
+  doCollision()
+}
+
+function doCollision() {
+  for (var i = 0; i < projectiles.length; i++) {
+    for (var j = 0; j < players.length; j++) {
+      if (projectiles[i].owner != players[j].id && projectiles[i].getCollider().isColliding(players[j].getCollider())) {
+        projectiles.splice(i, 1)
+        i--
+      }
+    }
+  }
 }
 
 function draw() {
@@ -141,6 +189,7 @@ function draw() {
   if (players.length > playersLastLength && socket.id === players[0].id) {
     socket.emit("catchUpNewPlayer", {
       players: players,
+      projectiles: projectiles
     });
   }
   for (let i = 0; i < players.length; i++) {
@@ -149,12 +198,16 @@ function draw() {
     }
     players[i].render();
   }
+
+  for (var i = 0; i < projectiles.length; i++) {
+    projectiles[i].render()
+  }
   debugMode();
 
   push();
-  translate(0, 0, 0);
-  fill(0);
-  stroke(255);
-  box(40);
+    translate(0, 0, 0)
+    fill(0)
+    stroke(255)
+    box(40)
   pop();
 }

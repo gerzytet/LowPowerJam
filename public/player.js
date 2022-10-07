@@ -1,3 +1,6 @@
+const playerSize = 50
+const bulletSpeed = 4
+
 class Player {
   constructor(id, x, y, z) {
     this.id = id;
@@ -5,17 +8,20 @@ class Player {
     this.vel = createVector(0, 0, 0);
     this.looking = createVector(0, 0, 1); //x, z
     this.groundedS = 50;
+
+    this.last_vx = 0
+    this.last_vy = 0
+    this.last_vz = 0
   }
 
   render() {
     this.doInput();
-    this.move();
     push();
     translate(this.pos);
     rotateY(-1*this.get2dLooking().heading());
     fill(255, 0, 0);
     stroke(255);
-    box(50);
+    box(playerSize);
     pop();
 
     push();
@@ -33,7 +39,6 @@ class Player {
     let x = sqrt(1 - y * y)
     let tempLooking = createVector(x, y)
     tempLooking.rotate(angle)
-    console.log(angle)
     looking2d.mult(tempLooking.x)
     this.looking = createVector(looking2d.x, tempLooking.y, looking2d.y)
 
@@ -88,9 +93,9 @@ class Player {
       });
     }
 
-    last_vx = vx;
-    last_vy = vy;
-    last_vz = vz;
+    this.last_vx = vx;
+    this.last_vy = vy;
+    this.last_vz = vz;
   }
 
   get2dLooking() {
@@ -115,6 +120,8 @@ class Player {
     else{
       this.groundedS -= 1;
     }
+
+    this.pos.y += this.vel.y
   }
 
   pan(panAmount, tiltAmount){
@@ -135,5 +142,13 @@ class Player {
     newLooking.y = this.looking.y
     newLooking.z = this.looking.x * -sin(angle) + this.looking.z * cos(angle)
     this.looking = newLooking
+  }
+
+  getShootProjectile() {
+    return new Projectile(this.pos.copy(), this.looking.copy().mult(bulletSpeed), this.id)
+  }
+
+  getCollider() {
+    return new SphereCollider(this.pos.copy(), playerSize * 0.8)
   }
 }
