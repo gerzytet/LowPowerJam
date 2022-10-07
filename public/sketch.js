@@ -25,7 +25,7 @@ const GAME = 2
 const MAIN_MENU = 3
 let menuState = MAIN_MENU
 let myLobbyIndex = -1
-const renderColliders = true
+const renderColliders = false
 
 /******GAMESTATE ZONE*****/
 let players = []
@@ -264,6 +264,11 @@ function drawGame() {
     }
     if (renderColliders) {
       players[i].getCollider().render()
+    }
+
+    new WallCollider(createVector(0, 0), createVector(100, 100)).render()
+    if (players[i].getCollider().isColliding(new WallCollider(createVector(0, 0), createVector(100, 100)))) {
+      console.log("Colliding")
     }
     players[i].render();
   }
