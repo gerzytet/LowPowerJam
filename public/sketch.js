@@ -13,22 +13,31 @@
 let cnv;
 let cam;
 
-let last_vx;
-let last_vy;
-let last_vz;
+let last_vx
+let last_vy
+let last_vz
+
+const NUM_LOBBIES = 6
+const LOBBY_SELECT = 0
+const LOBBY = 1
+const GAME = 2
+let menuState = LOBBY_SELECT
+let myLobbyIndex = -1
 
 /******GAMESTATE ZONE*****/
 let players = []
 let projectiles = []
 /******GAMESTATE ZONE*****/
 
+
+let lobbies
+let pointerLock
 let playersLastLength = 1;
 
 function windowResized() {
   cnv = resizeCanvas(windowWidth - 40, windowHeight - 80);
 }
 
-let pointerLock = false;
 
 document.addEventListener(
   "pointerlockchange",
@@ -47,11 +56,12 @@ document.addEventListener(
 
 //mouse click
 function mousePressed() {
-  console.log("mouse");
-  if (!pointerLock) {
-    document.getElementById("sketch-container").requestPointerLock();
-  } else {
-    socket.emit('shoot', {})
+  if (menuState === GAME) {
+    if (!pointerLock) {
+      document.getElementById("sketch-container").requestPointerLock();
+    } else {
+      socket.emit('shoot', {})
+    }
   }
 }
 
@@ -68,20 +78,9 @@ function mouseMoved(event) {
 }
 
 function setup() {
-  cnv = createCanvas(20, 20, WEBGL);
-  cnv.parent("sketch-container");
-  windowResized();
-
   socket = io.connect();
-
-  cam = createCamera();
-  normalMaterial();
-  let eyeZ = ((height/2) / tan(PI/6));
-  //perspective(PI/3, width/height, eyeZ/10 - 20, eyeZ*10);
-  perspective()
-  socket.emit("join");
-
-  projectiles.push(new Projectile(createVector(30, 30, 30), createVector(0, 0, 0)))
+  lobbies = []
+  pointerLock = false
 
   socket.on("tick", function (data) {
     for (let i = 0; i < data.events.length; i++) {
@@ -154,9 +153,22 @@ function setup() {
         }
       }
     }
-
     updateGamestate()
   });
+
+  socket.on('lobbyStatus', function (data) {
+    lobbies = []
+    for (var i = 0; i < data.lobbies.length; i++) {
+      lobbies.push(new Lobby(data.lobbies[i].players, data.lobbies[i].status))
+    }
+  })
+
+  socket.on('startGame', function (data) {
+    menuState = GAME
+    setupGame()
+  })
+
+  setupLobbySelect()
 }
 
 function updateGamestate() {
@@ -183,6 +195,30 @@ function doCollision() {
 }
 
 function draw() {
+  if (menuState == LOBBY_SELECT) {
+    drawLobbySelect()
+  } else if (menuState == LOBBY) {
+    drawLobby()
+  } else if (menuState == GAME) {
+    drawGame()
+  } else {
+    throw new Error("Invalid menu state")
+  }
+}
+
+function setupGame() {
+  cnv = createCanvas(20, 20, WEBGL);
+  cnv.parent("sketch-container");
+  windowResized();
+
+  cam = createCamera();
+  normalMaterial();
+  let eyeZ = ((height/2) / tan(PI/6));
+  //perspective(PI/3, width/height, eyeZ/10 - 20, eyeZ*10);
+  perspective()
+}
+
+function drawGame() {
   //windowResized()
 
   background(100);
@@ -211,4 +247,77 @@ function draw() {
     stroke(255)
     box(40)
   pop();
+}
+
+function doLobbyInput() {
+  if (keyIsDown("H".charCodeAt())) {
+    console.log("H pressed");
+    socket.emit("startGame", {
+      lobby: myLobbyIndex
+    })
+  }
+}
+
+function drawLobby() {
+  background(100);
+  push()
+    fill(0)
+    textSize(32)
+    let x = 10
+    let y = 30
+    text("Your lobby: " + (myLobbyIndex + 1), x, y); y += 32
+    text("Players: ", x, y); y += 32
+    for (let i = 0; i < lobbies[myLobbyIndex].players.length; i++) {
+      text(lobbies[myLobbyIndex].players[i], x, y); y += 32
+    }
+    y += 32
+    if (socket.id === lobbies[myLobbyIndex].players[0]) {
+      text("You are the host", x, y); y += 32
+      text("Press H to start the game", x, y); y += 32
+    }
+  pop()
+
+  doLobbyInput()
+}
+
+function setupLobbySelect() {
+  cnv = createCanvas(20, 20);
+  cnv.parent("sketch-container");
+  windowResized();
+}
+
+function joinLobby(n) {
+  socket.emit("joinLobby", {
+    lobby: n
+  })
+  menuState = LOBBY
+  myLobbyIndex = n
+}
+
+function doLobbySelectInput() {
+  for (let lobby = 0; lobby < NUM_LOBBIES; lobby++) {
+    let code = "1".charCodeAt(0) + lobby
+    if (keyIsDown(code) && lobbies[lobby].status == LOBBY_OPEN) {
+      joinLobby(lobby)
+      return
+    }
+  }
+}
+
+function drawLobbySelect() {
+  background(100);
+  push()
+    fill(0)
+    textSize(32)
+    let x = 10
+    let y = 30
+    for (var i = 0; i < lobbies.length; i++) {
+      text("Lobby " + (i + 1) + ": " + lobbies[i].players.length + " players", x, y)
+      y += 32
+    }
+    text("Press 1 to join lobby 1, 2 to join lobby 2, etc.", x, y)
+    y += 32
+  pop()
+
+  doLobbySelectInput()
 }
