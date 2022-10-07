@@ -11,11 +11,60 @@
 	volume: 0.2
 });*/
 
+let cnv
+let cam
+
+function windowResized() {
+	cnv = resizeCanvas(windowWidth - 40, windowHeight - 80);
+}
+
+let pointerLock = false
+
+document.addEventListener('pointerlockchange', function onPointerLockChange() {
+	if (document.pointerLockElement === document.getElementById("sketch-container")) {
+		pointerLock = true
+	} else {
+		pointerLock = false
+	} 
+} ,false)
+
+//mouse click
+function mousePressed() {
+	console.log("mouse")
+	if (!pointerLock) {
+		document.getElementById("sketch-container").requestPointerLock()
+	}
+}
+
+function mouseMoved(event) {
+	//positive movementX is right
+	//positive movementY is down
+	cam.pan(- (event.movementX / 100)) //positive value is left
+	cam.tilt(event.movementY / 100)
+}
+
 function setup() {
-	cnv = createCanvas(20, 20);
-	cnv.parent("sketch-container");
+	cnv = createCanvas(20, 20, WEBGL)
+	cnv.parent("sketch-container")
+	windowResized()
+	cam = createCamera()
+	normalMaterial()
+	perspective()
+}
+
+function doInput() {
+	
+	
 }
 
 function draw() {
+	//windowResized()
+
+	background(205, 102, 94)
+	push()
+		translate(0, 0, 0)
+		box(40)
+	pop()
 	
+	doInput()
 }
