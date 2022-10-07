@@ -204,8 +204,16 @@ function doCollision() {
     for (var j = 0; j < players.length; j++) {
       if (projectiles[i].owner != players[j].id && projectiles[i].getCollider().isColliding(players[j].getCollider())) {
         projectiles.splice(i, 1)
-        players[j].damage(projectileDamage)
+        players[j].damage(PROJECTILE_DAMAGE)
         i--
+      }
+    }
+  }
+
+  for (var i = 0; i < kitchens.length; i++) {
+    for (var j = 0; j < players.length; j++) {
+      if (kitchens[i].getCollider().isColliding(players[j].getCollider())) {
+        kitchens[i].regeneratePlayer(players[j])
       }
     }
   }

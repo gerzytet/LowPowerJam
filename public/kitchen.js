@@ -27,18 +27,26 @@ class HealthKitchen extends Kitchen {
             box(KITCHEN_SIZE)
         pop()
     }
+
+    regeneratePlayer(player) {
+        player.heal(0.5)
+    }
 }
 
 class TomatoKitchen extends Kitchen {
     constructor(pos) {
         super(pos)
     }
-    
+
     render() {
         push()
             translate(this.pos)
             fill(255, 0, 0)
             box(KITCHEN_SIZE)
         pop()
+    }
+
+    regeneratePlayer(player) {
+        player.addAmmo(0.03)
     }
 }

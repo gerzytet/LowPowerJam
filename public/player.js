@@ -1,7 +1,8 @@
-const playerSize = 50
-const projectileSpeed = 4
-const playerMaxHealth = 100
-const projectileDamage = 20
+const PLAYER_SIZE = 50
+const PROJECTILE_SPEED = 4
+const PLAYER_MAX_HEALTH = 100
+const PROJECTILE_DAMAGE = 20
+const MAX_AMMO = 20
 
 class Player {
   constructor(id, x, y, z) {
@@ -10,7 +11,7 @@ class Player {
     this.vel = createVector(0, 0, 0)
     this.looking = createVector(0, 0, 1) //x, z
     this.groundedS = 50
-    this.health = playerMaxHealth
+    this.health = PLAYER_MAX_HEALTH
     this.ammo = 10
 
     this.last_vx = 0
@@ -23,9 +24,9 @@ class Player {
     push();
       translate(this.pos);
       rotateY(-1*this.get2dLooking().heading());
-      fill(255 * (this.health / playerMaxHealth), 0, 0);
+      fill(255 * (this.health / PLAYER_MAX_HEALTH), 0, 0);
       stroke(255);
-      box(playerSize);
+      box(PLAYER_SIZE);
     pop();
 
     push();
@@ -149,21 +150,35 @@ class Player {
   }
 
   getShootProjectile() {
-    return new Projectile(this.pos.copy(), this.looking.copy().mult(projectileSpeed), this.id)
+    return new Projectile(this.pos.copy(), this.looking.copy().mult(PROJECTILE_SPEED), this.id)
   }
 
   getCollider() {
-    return new SphereCollider(this.pos.copy(), playerSize * 0.8)
+    return new SphereCollider(this.pos.copy(), PLAYER_SIZE * 0.8)
   }
 
   damage(amount) {
     this.health -= amount
     if (this.health <= 0) {
-      this.health = playerMaxHealth
+      this.health = PLAYER_MAX_HEALTH
     }
   }
 
   canShoot() {
     return this.ammo > 0
+  }
+
+  heal(amount) {
+    this.health += amount
+    if (this.health > PLAYER_MAX_HEALTH) {
+      this.health = PLAYER_MAX_HEALTH
+    }
+  }
+
+  addAmmo(amount) {
+    this.ammo += amount
+    if (this.ammo > MAX_AMMO) {
+      this.ammo = MAX_AMMO
+    }
   }
 }
