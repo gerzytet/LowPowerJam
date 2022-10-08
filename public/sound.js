@@ -1,9 +1,11 @@
 /*
 @file sound.js
 @author entire team
-@date 2/19/2022
+@date 10/7/2022
 @brief File that handles sound class
 */
+
+//TODO Volume should depend on distance from player
 
 class SoundEntity {
     constructor(src){

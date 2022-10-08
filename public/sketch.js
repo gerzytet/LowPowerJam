@@ -1,8 +1,8 @@
 /*
 @file sketch.js
 @author entire team
-@date 2/18/2022
-@brief File that controls the graphics on the canvas
+@date 10/7/2022
+@brief File that renders graphics
 */
 
 /*var explosionSound = new Howl({
@@ -10,6 +10,7 @@
 	loop: false,
 	volume: 0.2
 });*/
+
 let cnv;
 let cam;
 
@@ -27,12 +28,11 @@ let menuState = MAIN_MENU
 let myLobbyIndex = -1
 const renderColliders = false
 
-/******GAMESTATE ZONE*****/
+/******GAMESTATE ZONE******/
 let players = []
 let projectiles = []
 let kitchens = []
-/******GAMESTATE ZONE*****/
-
+/******GAMESTATE ZONE******/
 
 let lobbies
 let pointerLock
@@ -41,7 +41,6 @@ let playersLastLength = 1;
 function windowResized() {
   cnv = resizeCanvas(windowWidth - 40, windowHeight - 80);
 }
-
 
 document.addEventListener(
   "pointerlockchange",
@@ -200,6 +199,7 @@ function updateGamestate() {
 }
 
 function doCollision() {
+  //projectile collision
   for (var i = 0; i < projectiles.length; i++) {
     for (var j = 0; j < players.length; j++) {
       if (projectiles[i].owner != players[j].id && projectiles[i].getCollider().isColliding(players[j].getCollider())) {
@@ -210,6 +210,7 @@ function doCollision() {
     }
   }
 
+  //kitchen collision
   for (var i = 0; i < kitchens.length; i++) {
     for (var j = 0; j < players.length; j++) {
       if (kitchens[i].getCollider().isColliding(players[j].getCollider())) {

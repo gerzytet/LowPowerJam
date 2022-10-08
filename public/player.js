@@ -1,3 +1,10 @@
+/*
+@file player.js
+@author entire team
+@date 10/7/2022
+@brief Defines player behavior
+*/
+
 const PLAYER_SIZE = 50
 const PROJECTILE_SPEED = 4
 const PLAYER_MAX_HEALTH = 100
@@ -59,6 +66,7 @@ class Player {
     cam.lookAt(this.pos.x + this.looking.x, this.pos.y + this.looking.y, this.pos.z + this.looking.z);
   }
 
+  //basic movement
   doInput() {
     let vx = 0;
     let vy = 0;
