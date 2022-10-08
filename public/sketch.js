@@ -99,7 +99,7 @@ function mousePressed() {
       if (player.canShoot()) {
         socket.emit("shoot", {});
         player.ammo--;
-        player.shootTimer = player.shootTimerMax;
+        player.shootTimer = SHOOT_TIMER_MAX;
         //var volMult = soundMultiplier * dist(player.x, player.y, player.z, )
       }
     }
@@ -123,12 +123,18 @@ function mouseMoved(event) {
   }
 }
 
-//!Don't move this!
-/*
+//Must be before setup
 function preload(){
-
+  tomatoImg = loadImage('images/Tomato.png', () => { }, () => {
+		console.log("failed to load tomato img");
+	});
+  plateImg = loadImage('images/Plate.png', () => { }, () => {
+		console.log("failed to load plate img");
+	});
+  spoonImg = loadImage('images/Spoon.png', () => { }, () => {
+		console.log("failed to load spoon img");
+	});
 }
-*/
 
 function setup() {
   socket = io.connect();

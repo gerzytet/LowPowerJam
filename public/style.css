@@ -5,16 +5,23 @@ body {
   .no-bar {
     display: none;
   }
+
+  .flex-container{
+    display: flex;
+  }
+  
   #canvasUI{
     z-index: 10;
     position: fixed;
     visibility: hidden;
+    padding: 0px;
+    margin: 0px;
   }
 
   #tomato_wait{    
     position: fixed;
-    top: 10%;
-    left: 10%;
+    top: 9%;
+    left: 6%;
     width: 70px;
     height: 20px;
     margin-left: -15px;
@@ -25,8 +32,8 @@ body {
   }
   #Health_Bar{    
     position: fixed;
-    top: 5%;
-    left: 10%;
+    top: 4%;
+    left: 6%;
     width: 80px;
     height: 40px;
     margin-left: -15px;
@@ -61,4 +68,87 @@ body {
     z-index: 10;
     
     visibility: inherit;
+  }
+  
+  #Death_Counter {
+    position: fixed;
+    top: 2%;
+    left: 47%;
+    padding: 10px;
+    border: 2px solid red;
+    background-color: gray;
+  }
+
+  #Player_list {
+    position: relative;
+    top: 0;
+    left: 87%;
+    width: 90px;
+    padding: 10px;
+    border: 2px solid black;
+    background-color: gray;
+  }
+
+  p{
+    padding: 1px;
+    margin: 1px;
+  }
+
+  /*Weapon UI*/
+  #Tomato_Block{
+    position: fixed;
+    top: 0.01%;
+    left: 94.3%;
+    padding: 10px;
+    border: 2px solid black;
+    background-color: gray;
+  }
+
+  #Plate_Block{
+    position: fixed;
+    top: 0.01%;
+    left: 94.3%;
+    padding: 10px;
+    border: 2px solid black;
+    background-color: gray;
+  }
+
+  #Spoon_Block{
+    position: fixed;
+    top: 0.01%;
+    left: 94.3%;
+    padding: 10px;
+    border: 2px solid black;
+    background-color: gray;
+  }
+
+  #W1{
+    
+  }
+
+  #W2{
+    
+  }
+  
+  #W3{
+    
+  }
+
+  #tImg {
+    width: 50px;
+    height: 50px;
+  }
+
+  #pImg {
+    width: 50px;
+    height: 50px;
+  }
+
+  #sImg {
+    width: 50px;
+    height: 50px;
+  }
+  
+  #ammoCounter{
+
   }

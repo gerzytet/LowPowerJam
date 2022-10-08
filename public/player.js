@@ -13,7 +13,7 @@ const PROJECTILE_DAMAGE = 20;
 const MAX_AMMO = 20;
 const PLAYER_GRAVITY = 0.4
 const BATTERY_TIMER = 80
-const RESPAWN_TIMER = 100
+const RESPAWN_TIMER = 150
 
 const TOMATO = 1
 const PLATE = 2
@@ -54,7 +54,6 @@ class Player {
     if (!this.canShoot() && this.shootTimer >= 0) {
       this.shootTimer -= 0.1;
     }
-    
 
     push();
       translate(this.pos);
