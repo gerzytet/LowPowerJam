@@ -5,6 +5,8 @@
 @brief UI stuff
 */
 
+var tab_bool = false;
+
 function updateUI(id){
     let player = findPlayer(id);
     
@@ -44,11 +46,19 @@ function updateUI(id){
     }
 
     let playerList = document.getElementById("Player_list");
-    let tempStr = "<p>Player    Kills</p>";
-    if(players.length > 0){
-        for(let i = 0; i < players.length; i++){
-            tempStr += "<p>" + players[i].name + "   " + players[i].kills + "</p>";
+    if(tab_bool){
+        playerList.style.visibility = "visible";
+        let tempStr = "<table style='width:100%;'><tr><th style='width:33%'>Player</th><th style='width:33%'>Kills</th><th style='width:33%'>Deaths</th></tr>";
+        if(players.length > 0 && tab_bool){
+            for(let i = 0; i < players.length; i++){
+                tempStr += "<tr><td>" + players[i].name + "</td><td>" + players[i].kills + "</td><td>" + players[i].deaths + "</td></tr>";
+            }
         }
+        tempStr += "</table>";
+        playerList.innerHTML = tempStr;
     }
-    playerList.innerHTML = tempStr;
+    else{
+        playerList.style.visibility = "hidden";
+    }
+    
 }
