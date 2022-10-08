@@ -11,6 +11,7 @@ const PLAYER_MAX_HEALTH = 100;
 const PROJECTILE_DAMAGE = 100;
 const MAX_AMMO = 20;
 const PLAYER_GRAVITY = 0.4
+const BATTERY_TIMER = 80
 
 const TOMATO = 1
 const PLATE = 2
@@ -42,6 +43,9 @@ class Player {
     
     this.Health_Bar = document.getElementById("Health_Bar");
     this.Health_Bar.max = PLAYER_MAX_HEALTH;
+
+    this.hasBattery = false
+    this.batteryTimer = BATTERY_TIMER
   }
 
   render() {
@@ -133,6 +137,12 @@ class Player {
       })
     }
 
+    if (keyIsDown("E".charCodeAt()) && this.batteryTimer <= 0) {
+      socket.emit("pickupBattery", {})
+      this.batteryTimer = BATTERY_TIMER
+    }
+    this.batteryTimer--
+
     this.last_vx = vx
     this.last_vy = vy
     this.last_vz = vz
@@ -219,6 +229,22 @@ class Player {
     if (this.ammo > MAX_AMMO) {
       this.ammo = MAX_AMMO;
     }
+  }
+
+  canPickupBattery() {
+    return !this.hasBattery
+  }
+
+  canDropBattery() {
+    return this.hasBattery
+  }
+
+  pickupBattery() {
+    this.hasBattery = true
+  }
+
+  dropBattery() {
+    this.hasBattery = false
   }
 
   /*

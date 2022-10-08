@@ -221,6 +221,27 @@ function setup() {
         })
         testSound.play();
       }
+
+      if (data.events[i].type === "PlayerPickupBattery") {
+        let player = findPlayer(data.events[i].id)
+        if (player.canPickupBattery() || player.canDropBattery()) {
+          for (let j = 0; j < kitchens.length; j++) {
+            let kitchen = kitchens[j]
+            if (kitchen.hasBatterySlot() && kitchen.batterySlot.getCollider().isColliding(player.getCollider())) {
+              if (player.hasBattery && !kitchen.batterySlot.hasBattery) {
+                kitchen.batterySlot.hasBattery = true
+                player.hasBattery = false
+                break
+              }
+              if (!player.hasBattery && kitchen.batterySlot.hasBattery) {
+                kitchen.batterySlot.hasBattery = false
+                player.hasBattery = true
+                break
+              }
+            }
+          }
+        }
+      }
     }
     updateGamestate();
   });

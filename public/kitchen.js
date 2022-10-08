@@ -9,28 +9,42 @@ const KITCHEN_RADIUS = 120
 const KITCHEN_SIZE = 30
 
 class Kitchen {
-    constructor(pos) {
+    constructor(pos, batterySlot) {
         this.pos = pos
+        this.batterySlot = batterySlot
     }
 
     render() {
-        
+        this.batterySlot.render()
     }
 
     getCollider() {
         return new SphereCollider(this.pos.copy(), KITCHEN_RADIUS)
     }
+
+    isOn() {
+        return !this.hasBatterySlot() || this.batterySlot.hasBattery
+    }
+
+    hasBatterySlot() {
+        return this.batterySlot !== undefined
+    }
 }
 
 class HealthKitchen extends Kitchen {
-    constructor(pos) {
-        super(pos)
+    constructor(pos, batterySlot) {
+        super(pos, batterySlot)
     }
 
     render() {
         push()
+            super.render()
             translate(this.pos)
-            fill(255, 120, 120)
+            if (this.isOn()) {
+                fill(255, 120, 120)
+            } else {
+                fill(255 / 2, 120 / 2, 120 / 2)
+            }
             box(KITCHEN_SIZE)
         pop()
     }
@@ -41,14 +55,19 @@ class HealthKitchen extends Kitchen {
 }
 
 class TomatoKitchen extends Kitchen {
-    constructor(pos) {
-        super(pos)
+    constructor(pos, batterySlot) {
+        super(pos, batterySlot)
     }
 
     render() {
         push()
+            super.render()
             translate(this.pos)
-            fill(255, 0, 0)
+            if (this.isOn()) {
+                fill(255, 0, 0)
+            } else {
+                fill (255 / 2, 0, 0)
+            }
             box(KITCHEN_SIZE)
         pop()
     }

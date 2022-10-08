@@ -75,6 +75,7 @@ function newConnection(socket) {
   socket.on('shoot', shoot)
   socket.on('joinLobby', joinLobby)
   socket.on('startGame', startGame)
+  socket.on('pickupBattery', pickupBattery)
 
   socket.on("disconnect", Disconnect);
   
@@ -152,5 +153,12 @@ function newConnection(socket) {
     io.to("game" + lobbyIndex).emit("startGame", {
       map: data.map
     })
+  }
+
+  function pickupBattery(data) {
+    var player = socket.id
+    var lobbyIndex = getLobbyIndex(player)
+    if (lobbyIndex === -1) return
+    events[lobbyIndex].push({ type: "PlayerPickupBattery", id: player });
   }
 }
