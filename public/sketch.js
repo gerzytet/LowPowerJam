@@ -85,6 +85,7 @@ function mousePressed() {
         socket.emit("shoot", {});
         player.ammo--;
         player.shootTimer = player.shootTimerMax;
+        //var volMult = soundMultiplier * dist(player.x, player.y, player.z, )
         testSound.play();
       }
     }
@@ -300,8 +301,10 @@ function doCollisionMovePlayers() {
 
     for (let j = 0; j < walls.length; j++) {
       if (player.getCollider().isColliding(walls[j].getCollider())) {
-        player.pos = oldPos
-        break
+        let movementVector = player.pos.copy().sub(oldPos)
+        player.pos = oldPos.copy()
+        movementVector = walls[j].getCollider().moveAgainst(movementVector)
+        player.pos.add(movementVector)
       }
     }
   }

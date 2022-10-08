@@ -151,13 +151,11 @@ class Player {
 
     this.vel.y += this.accY;
     this.pos.y += this.vel.y;
-    console.log(this.pos.y)
     if (this.pos.y >= GROUND) {
       console.log("hit ground");
       this.vel.y = 0
       this.pos.y = GROUND
     }
-    console.log(this.pos.y + " " + this.vel.y)
   }
 
   pan(panAmount, tiltAmount) {

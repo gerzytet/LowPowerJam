@@ -109,6 +109,22 @@ class WallCollider {
         }
     }
 
+    //vec is a player movement that collides with this wall
+    //this pushes the vec against the wall
+    moveAgainst(vec) {
+        let vecMag  = vec.mag()
+        let vecAngle = vec.heading()
+
+        let wallAngle = this.p1.copy().sub(this.p2).heading()
+        let finalAngle = wallAngle - vecAngle
+        let finalMag = vecMag * cos(finalAngle)
+
+        let ans = createVector(0, 0)
+        ans.x = finalMag * cos(finalAngle)
+        ans.y = finalMag * sin(finalAngle)
+        return ans
+    }
+
     render() {
         let height = 300
         let width = this.p1.dist(this.p2)
