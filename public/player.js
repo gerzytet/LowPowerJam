@@ -12,6 +12,10 @@ const PROJECTILE_DAMAGE = 100;
 const MAX_AMMO = 20;
 const PLAYER_GRAVITY = 0.4
 
+const TOMATO = 1
+const PLATE = 2
+const SPOON = 3
+
 class Player {
   constructor(id, x, y, z) {
     this.id = id;
@@ -21,7 +25,8 @@ class Player {
     this.vel = createVector(0, 0, 0);
     this.looking = createVector(0, 0, 1); //x, z
     this.health = PLAYER_MAX_HEALTH;
-    this.ammo = 10;
+    this.ammo = 10
+    this.weapon = PLATE
 
     this.accY = PLAYER_GRAVITY;
 
@@ -49,13 +54,12 @@ class Player {
       this.Health_Bar.value += (this.health> this.Health_Bar.value) ? 1 : -1;
     }
 
-    this.doInput();
     push();
-    translate(this.pos);
-    rotateY(-1 * this.get2dLooking().heading());
-    fill(255 * (this.health / PLAYER_MAX_HEALTH), 0, 0);
-    stroke(255);
-    box(PLAYER_SIZE);
+      translate(this.pos);
+      rotateY(-1 * this.get2dLooking().heading());
+      fill(255 * (this.health / PLAYER_MAX_HEALTH), 0, 0);
+      stroke(255);
+      box(PLAYER_SIZE);
     pop();
 
     push();
@@ -121,17 +125,17 @@ class Player {
       vy = -8
     }
 
-    if (last_vx !== vx || last_vy !== vy || last_vz !== vz) {
+    if (this.last_vx !== vx || this.last_vy !== vy || this.last_vz !== vz) {
       socket.emit("changeVelocity", {
         vx: vx,
         vy: vy,
-        vz: vz,
-      });
+        vz: vz
+      })
     }
 
-    this.last_vx = vx;
-    this.last_vy = vy;
-    this.last_vz = vz;
+    this.last_vx = vx
+    this.last_vy = vy
+    this.last_vz = vz
   }
 
   get2dLooking() {
@@ -200,7 +204,7 @@ class Player {
   }
 
   canShoot() {
-    return this.ammo > 0 && this.shootTimer <= 0;
+    return this.ammo > 0 && this.shootTimer <= 0// && this.weapon === TOMATO
   }
 
   heal(amount) {

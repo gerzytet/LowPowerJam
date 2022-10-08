@@ -33,6 +33,9 @@ let last_vx;
 let last_vy;
 let last_vz;
 
+let mouseMovementX = 0
+let mouseMovementY = 0
+
 const NUM_LOBBIES = 6
 const LOBBY_SELECT = 0
 const LOBBY = 1
@@ -105,7 +108,13 @@ function mouseMoved(event) {
   //positive movementX is right
   //positive movementY is down
   if (pointerLock) {
-    findPlayer(socket.id).pan(event.movementX / 1000, event.movementY / 1000);
+    mouseMovementX += event.movementX
+    mouseMovementY += event.movementY
+    if ((abs(mouseMovementX) + abs(mouseMovementY)) > 15) {
+      findPlayer(socket.id).pan(mouseMovementX / 1000, mouseMovementY / 1000);
+      mouseMovementX = 0
+      mouseMovementY = 0
+    }
   }
 }
 
@@ -288,13 +297,28 @@ function doCollisionMovePlayers() {
   for (var i = 0; i < projectiles.length; i++) {
     for (var j = 0; j < players.length; j++) {
       if (
-        projectiles[i].owner != players[j].id &&
+        projectiles[i].owner !== players[j].id &&
         projectiles[i].getCollider().isColliding(players[j].getCollider())
       ) {
-        projectiles.splice(i, 1);
-        players[j].damage(PROJECTILE_DAMAGE);
-        i--;
-        break
+        let isReflected = false
+        if (players[j].weapon === PLATE) {
+          let incomingAngle = players[j].get2dLooking().angleBetween(
+            createVector(-projectiles[i].vel.x, -projectiles[i].vel.z)
+          )
+          if (abs(incomingAngle) < PI / 2) {
+            let reflected = players[j].getShootProjectile()
+            projectiles[i].vel = reflected.vel
+            projectiles[i].pos = reflected.pos
+            projectiles[i].owner = reflected.owner
+            isReflected = true
+          }
+        }
+        if (!isReflected) {
+          projectiles.splice(i, 1);
+          players[j].damage(PROJECTILE_DAMAGE);
+          i--;
+          break
+        }
       }
     }
   }
@@ -329,6 +353,27 @@ function doCollisionMovePlayers() {
         player.pos = oldPos.copy()
         movementVector = walls[j].getCollider().moveAgainst(movementVector)
         player.pos.add(movementVector)
+      }
+
+      if (player.getCollider().isColliding(walls[j].getCollider())) {
+        //we are stuck in a wall, get unstuck
+        function tryvec(v) {
+          player.pos.add(v)
+          if (player.getCollider().isColliding(walls[j].getCollider())) {
+            return false
+            player.pos.sub(v)
+          }
+          return true
+        }
+
+        let mag = 0
+        while (true) {
+          mag++
+          if (tryvec(createVector(mag, 0, 0))) break
+          if (tryvec(createVector(-mag, 0, 0))) break
+          if (tryvec(createVector(0, 0, mag))) break
+          if (tryvec(createVector(0, 0, -mag))) break
+        }
       }
     }
   }
@@ -374,10 +419,11 @@ function drawGame() {
   }
   for (let i = 0; i < players.length; i++) {
     if (socket.id === players[i].id) {
-      players[i].myView();
+      players[i].doInput()
+      players[i].myView()
     }
     if (renderColliders) {
-      players[i].getCollider().render();
+      players[i].getCollider().render()
     }
 
     //new Wall(createVector(0, 0), createVector(100, 100)).render()
@@ -409,10 +455,10 @@ function drawGame() {
   debugMode();
 
   push();
-  translate(0, 0, 0);
-  fill(0);
-  stroke(255);
-  box(40);
+    translate(0, 0, 0);
+    fill(0);
+    stroke(255);
+    box(40);
   pop();
 }
 
