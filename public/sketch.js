@@ -83,7 +83,7 @@ document.addEventListener(
 
 function findPlayer(id) {
   for (let i = 0; i < players.length; i++) {
-    if (socket.id === players[i].id) {
+    if (id === players[i].id) {
       return players[i];
     }
   }
@@ -138,7 +138,7 @@ function setup() {
 
   socket.on("tick", function (data) {
     for (let i = 0; i < data.events.length; i++) {
-      console.log(data.events.length)
+      //console.log(data.events.length)
       if (data.events[i].type === "PlayerJoin") {
         players.push(new Player(data.events[i].id, spawnPoint.x, spawnPoint.y, spawnPoint.z));
       }
@@ -252,6 +252,7 @@ function setup() {
       if (data.events[i].type === "PlayerChangeWeapon") {
         console.log("got change " + data.events[i].weapon + " " + data.events[i].id)
         let player = findPlayer(data.events[i].id)
+        console.log(player.id);
         player.changeWeapon(data.events[i].weapon)
       }
     }
@@ -336,6 +337,7 @@ function doCollisionMovePlayers() {
       ) {
         let isReflected = false
         if (players[j].weapon === PLATE) {
+          console.log(players[j].id + " relected");
           let incomingAngle = players[j].get2dLooking().angleBetween(
             createVector(-projectiles[i].vel.x, -projectiles[i].vel.z)
           )
@@ -488,14 +490,14 @@ function drawGame() {
   }
 
 
-  debugMode();
-
   push();
     translate(0, 0, 0);
     fill(0);
     stroke(255);
     box(40);
   pop();
+
+  updateUI(socket.id);
 }
 
 function doLobbyInput() {
