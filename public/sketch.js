@@ -28,25 +28,14 @@ let menuState = MAIN_MENU;
 let myLobbyIndex = -1;
 const renderColliders = false;
 
-<<<<<<< HEAD
-/******GAMESTATE ZONE*****/
+/******GAMESTATE ZONE******/
 let players = [];
 let projectiles = [];
 let kitchens = [];
-/******GAMESTATE ZONE*****/
+/******GAMESTATE ZONE******/
 
 let lobbies;
 let pointerLock;
-=======
-/******GAMESTATE ZONE******/
-let players = []
-let projectiles = []
-let kitchens = []
-/******GAMESTATE ZONE******/
-
-let lobbies
-let pointerLock
->>>>>>> 00289946c2efcdd03cee5654ddffaa43701f1f38
 let playersLastLength = 1;
 
 function windowResized() {
