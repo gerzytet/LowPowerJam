@@ -144,3 +144,13 @@ class WallCollider {
         pop()
     }
 }
+
+class NullCollider {
+    constructor() {
+
+    }
+
+    isColliding(other) {
+        return false
+    }
+}

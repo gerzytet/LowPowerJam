@@ -76,6 +76,7 @@ function newConnection(socket) {
   socket.on('joinLobby', joinLobby)
   socket.on('startGame', startGame)
   socket.on('pickupBattery', pickupBattery)
+  socket.on('changeWeapon', changeWeapon);
 
   socket.on("disconnect", Disconnect);
   
@@ -160,5 +161,13 @@ function newConnection(socket) {
     var lobbyIndex = getLobbyIndex(player)
     if (lobbyIndex === -1) return
     events[lobbyIndex].push({ type: "PlayerPickupBattery", id: player });
+  }
+
+  function changeWeapon(data){
+    var player = socket.id
+    var lobbyIndex = getLobbyIndex(player)
+    console.log(data)
+    if (lobbyIndex === -1) return
+    events[lobbyIndex].push({ type: "PlayerChangeWeapon", id: player, weapon: data.weapon });
   }
 }

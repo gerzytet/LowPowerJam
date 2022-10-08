@@ -8,14 +8,19 @@
 const PLAYER_SIZE = 50;
 const PROJECTILE_SPEED = 4;
 const PLAYER_MAX_HEALTH = 100;
-const PROJECTILE_DAMAGE = 100;
+const PROJECTILE_DAMAGE = 20;
 const MAX_AMMO = 20;
 const PLAYER_GRAVITY = 0.4
 const BATTERY_TIMER = 80
+const RESPAWN_TIMER = 100
 
 const TOMATO = 1
 const PLATE = 2
 const SPOON = 3
+
+const oneKey = 49;
+const twoKey = 50;
+const threeKey = 51;
 
 class Player {
   constructor(id, x, y, z) {
@@ -46,6 +51,8 @@ class Player {
 
     this.hasBattery = false
     this.batteryTimer = BATTERY_TIMER
+    this.dead = false
+    this.deathTimer = 0
   }
 
   render() {
@@ -106,6 +113,11 @@ class Player {
 
   //basic movement
   doInput() {
+    
+    if (this.isDead()) {
+      return
+    }
+    
     let vx = 0;
     let vy = this.vel.y;
     let vz = 0;
@@ -123,6 +135,13 @@ class Player {
       vx = -3;
     } else {
       vx = 0;
+    }
+    if (keyIsDown(oneKey)){
+      socket.emit('changeWeapon', {weapon: TOMATO})
+      console.log("TOMATO client " + socket.id)
+    }else if (keyIsDown(twoKey)){
+      socket.emit('changeWeapon', {weapon: PLATE})
+      console.log("PLATE client " + socket.id)
     }
 
     if (keyIsDown(32) && this.pos.y == GROUND) {
@@ -170,6 +189,11 @@ class Player {
       this.vel.y = 0
       this.pos.y = GROUND
     }
+
+    this.deathTimer--
+    if (this.deathTimer === 0) {
+      this.respawn()
+    }
   }
 
   pan(panAmount, tiltAmount) {
@@ -201,20 +225,30 @@ class Player {
   }
 
   getCollider() {
-    return new SphereCollider(this.pos.copy(), PLAYER_SIZE * 0.8);
+    if (this.isDead()) {
+      return new NullCollider()
+    } else {
+      return new SphereCollider(this.pos.copy(), PLAYER_SIZE * 0.8)
+    }
   }
 
   damage(amount) {
     this.health -= amount;
     if (this.health <= 0) {
-      console.log("you died!");
-      //display "You Lose! X players remaining!"
-      this.health = PLAYER_MAX_HEALTH;
+      this.die()
     }
   }
 
   canShoot() {
-    return this.ammo > 0 && this.shootTimer <= 0// && this.weapon === TOMATO
+    return this.ammo > 0 && this.shootTimer <= 0 && this.weapon === TOMATO
+  }
+
+  die() {
+    this.deathTimer = RESPAWN_TIMER
+  }
+
+  isDead() {
+    return this.deathTimer > 0
   }
 
   heal(amount) {
@@ -245,6 +279,15 @@ class Player {
 
   dropBattery() {
     this.hasBattery = false
+  }
+
+  respawn() {
+    this.health = PLAYER_MAX_HEALTH
+    this.ammo = MAX_AMMO
+  }
+
+  changeWeapon(weapon) {
+    this.weapon = weapon
   }
 
   /*

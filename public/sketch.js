@@ -9,19 +9,21 @@
 TODO:
 *List of players
 *Health/Death
-*Fix Firerate Bar UI element
 *Optimize performance
 *Win/lose condition
 *Disconnect (lobby is cleared out when there are zero clients)
 */
 
+//!Need splat sounds, music, interact sounds, menu sounds.
 var sounds = ['sounds/laserBeam.mp3'];
 
+/*
 var testSound = new Howl({
 	src: [sounds[0]],
 	loop: false,
 	volume: 0.5
 });
+*/
 
 //4 levels, multiplied 1-4 depending on distance
 let soundMultiplier = 100;
@@ -107,6 +109,9 @@ function mousePressed() {
 function mouseMoved(event) {
   //positive movementX is right
   //positive movementY is down
+  if (findPlayer(socket.id) !== undefined && findPlayer(socket.id).isDead()) {
+    return
+  }
   if (pointerLock) {
     mouseMovementX += event.movementX
     mouseMovementY += event.movementY
@@ -133,6 +138,7 @@ function setup() {
 
   socket.on("tick", function (data) {
     for (let i = 0; i < data.events.length; i++) {
+      console.log(data.events.length)
       if (data.events[i].type === "PlayerJoin") {
         players.push(new Player(data.events[i].id, spawnPoint.x, spawnPoint.y, spawnPoint.z));
       }
@@ -242,6 +248,12 @@ function setup() {
           }
         }
       }
+
+      if (data.events[i].type === "PlayerChangeWeapon") {
+        console.log("got change " + data.events[i].weapon + " " + data.events[i].id)
+        let player = findPlayer(data.events[i].id)
+        player.changeWeapon(data.events[i].weapon)
+      }
     }
     updateGamestate();
   });
@@ -262,6 +274,7 @@ function setup() {
   setupMainMenu();
 }
 
+//0-1 scale, sound is louder when distance is shorter
 function calculateVolume (d){
   return min(1, soundMultiplier / d);
 }
@@ -451,7 +464,9 @@ function drawGame() {
     //if (players[i].getCollider().isColliding(new Wall(createVector(0, 0), createVector(100, 100)).getCollider())) {
     //  console.log("Colliding")
     //}
-    players[i].render();
+    if (!players[i].isDead()) {
+      players[i].render()
+    }
   }
 
   for (var i = 0; i < projectiles.length; i++) {
