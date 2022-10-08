@@ -49,7 +49,7 @@ function tick() {
   });
 }
 
-function removePlayer(id) {
+function removePlayerFromLobbies(id) {
   for (var i = 0; i < lobbies.length; i++) {
     var players = lobbies[i].players
     //remove player from lobby
@@ -77,6 +77,7 @@ function newConnection(socket) {
   socket.on('startGame', startGame)
   socket.on('pickupBattery', pickupBattery)
   socket.on('changeWeapon', changeWeapon);
+  socket.on('quitLobby', quitLobby);
 
   socket.on("disconnect", Disconnect);
   
@@ -125,7 +126,7 @@ function newConnection(socket) {
     var player = socket.id;
     console.log("disconnect " + player);
     events.push({ type: "Disconnect", id: player });
-    removePlayer(player)
+    removePlayerFromLobbies(player)
   }
 
   function shoot() {
@@ -169,5 +170,12 @@ function newConnection(socket) {
     console.log(data)
     if (lobbyIndex === -1) return
     events[lobbyIndex].push({ type: "PlayerChangeWeapon", id: player, weapon: data.weapon });
+  }
+
+  function quitLobby(data) {
+    var player = socket.id
+    var lobbyIndex = getLobbyIndex(player)
+    if (lobbyIndex === -1) return
+    removePlayerFromLobbies(player)
   }
 }

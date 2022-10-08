@@ -153,4 +153,6 @@ class NullCollider {
     isColliding(other) {
         return false
     }
+
+    render() {}
 }

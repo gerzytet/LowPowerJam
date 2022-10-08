@@ -45,11 +45,12 @@ const GAME = 2
 const MAIN_MENU = 3
 let menuState = MAIN_MENU
 let myLobbyIndex = -1
-const renderColliders = false
+const renderColliders = true
 
 /******GAMESTATE ZONE*****/
 let players = []
 let projectiles = []
+let droppedBatteries = []
 /******GAMESTATE ZONE*****/
 
 /**MAP ZONE*/
@@ -83,7 +84,7 @@ document.addEventListener(
 
 function findPlayer(id) {
   for (let i = 0; i < players.length; i++) {
-    if (socket.id === players[i].id) {
+    if (id === players[i].id) {
       return players[i];
     }
   }
@@ -123,12 +124,10 @@ function mouseMoved(event) {
   }
 }
 
-//!Don't move this!
-/*
+let TOMATO_OBJ
 function preload(){
-
+  TOMATO_OBJ = loadModel('models/Tomato.obj', true);
 }
-*/
 
 function setup() {
   socket = io.connect();
@@ -138,7 +137,6 @@ function setup() {
 
   socket.on("tick", function (data) {
     for (let i = 0; i < data.events.length; i++) {
-      console.log(data.events.length)
       if (data.events[i].type === "PlayerJoin") {
         players.push(new Player(data.events[i].id, spawnPoint.x, spawnPoint.y, spawnPoint.z));
       }
@@ -315,12 +313,7 @@ function loadMap(index) {
 
 function updateGamestate() {
   for (var i = 0; i < projectiles.length; i++) {
-    if (projectiles[i].isDespawned()) {
-      projectiles.splice(i, 1);
-      i--;
-    } else {
-      projectiles[i].move();
-    }
+    projectiles[i].move()
   }
 
   doCollisionMovePlayers()
@@ -348,8 +341,8 @@ function doCollisionMovePlayers() {
           }
         }
         if (!isReflected) {
+          players[j].damage(PROJECTILE_DAMAGE, findPlayer(projectiles[i].owner))
           projectiles.splice(i, 1);
-          players[j].damage(PROJECTILE_DAMAGE);
           i--;
           break
         }
@@ -357,12 +350,29 @@ function doCollisionMovePlayers() {
     }
   }
 
+  //player-dead tomato
+  for (let i = 0; i < players.length; i++) {
+    let count = 0
+    for (let j = 0; j < projectiles.length; j++) {
+      if (projectiles[j].isDead()) {
+        if (projectiles[j].getPlayerSlowCollider().isColliding(players[i].getCollider())) {
+          count++
+        }
+      }
+    }
+
+    players[i].setTomatoInterference(count)
+  }
+
+  //Wall-projectile
   for (var i = 0; i < projectiles.length; i++) {
     for (var j = 0; j < walls.length; j++) {
-      if (projectiles[i].getCollider().isColliding(walls[j].getCollider())) {
-        projectiles.splice(i, 1);
-        i--;
-        break
+      if (projectiles[i].getWallFloorCollider().isColliding(walls[j].getCollider())) {
+        //projectiles.splice(i, 1);
+        //i--;
+        //break
+
+        projectiles[i].dead = true
       }
     }
   }
@@ -376,6 +386,7 @@ function doCollisionMovePlayers() {
     }
   }
 
+  //player-wall
   for (var i = 0; i < players.length; i++) {
     let player = players[i]
     let oldPos = player.pos.copy()
@@ -411,6 +422,20 @@ function doCollisionMovePlayers() {
       }
     }
   }
+
+  //player-dropped battery
+  for (let i = 0; i < players.length; i++) {
+    for (let j = 0; j < droppedBatteries.length; j++) {
+      if (
+        players[i].canPickupBattery() &&
+        players[i].getCollider().isColliding(droppedBatteries[j].getCollider())
+      ) {
+        players[i].pickupBattery()
+        droppedBatteries.splice(j, 1)
+        j--
+      }
+    }
+  }
 }
 
 function draw() {
@@ -443,7 +468,7 @@ function setupGame() {
 function drawGame() {
   //windowResized()
 
-  background(100);
+  background(51,221,255)
 
   if (players.length > playersLastLength && socket.id === players[0].id) {
     socket.emit("catchUpNewPlayer", {
@@ -487,6 +512,10 @@ function drawGame() {
     walls[i].render()
   }
 
+  for (let i = 0; i < droppedBatteries.length; i++) {
+    droppedBatteries[i].render()
+  }
+
 
   debugMode();
 
@@ -496,15 +525,25 @@ function drawGame() {
     stroke(255);
     box(40);
   pop();
+
+  push()
+    fill(0, 0, 0, 100)
+    rotateX(PI/2)
+    translate(0, GROUND, 0)
+    plane(2000, 2000)
+  pop()
 }
 
 function doLobbyInput() {
-  if (keyIsDown("H".charCodeAt())) {
-    console.log("H pressed");
+  if (keyIsDown("H".charCodeAt()) && socket.id === lobbies[myLobbyIndex].players[0]) {
     socket.emit("startGame", {
       lobby: myLobbyIndex,
       map: 0
     })
+  } else if (keyIsDown("Q".charCodeAt())) {
+    socket.emit('quitLobby', {})
+    setupLobbySelect()
+    menuState = LOBBY_SELECT
   }
 }
 
@@ -530,6 +569,8 @@ function drawLobby() {
     text("Press H to start the game", x, y);
     y += 32;
   }
+  text("Press Q to quit lobby", x, y);
+  y += 32;
   pop();
 
   doLobbyInput();

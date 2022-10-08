@@ -13,6 +13,7 @@ const MAX_AMMO = 20;
 const PLAYER_GRAVITY = 0.4
 const BATTERY_TIMER = 80
 const RESPAWN_TIMER = 100
+const PLAYER_SPEED = 3
 
 const TOMATO = 1
 const PLATE = 2
@@ -32,7 +33,7 @@ class Player {
     this.looking = createVector(0, 0, 1); //x, z
     this.health = PLAYER_MAX_HEALTH;
     this.ammo = 10
-    this.weapon = PLATE
+    this.weapon = TOMATO
 
     this.accY = PLAYER_GRAVITY;
 
@@ -53,6 +54,11 @@ class Player {
     this.batteryTimer = BATTERY_TIMER
     this.dead = false
     this.deathTimer = 0
+
+    this.kills = 0
+    this.deaths = 0
+
+    this.speed = PLAYER_SPEED
   }
 
   render() {
@@ -123,16 +129,16 @@ class Player {
     let vz = 0;
 
     if (keyIsDown(87)) {
-      vz = 3;
+      vz = this.speed;
     } else if (keyIsDown(83)) {
-      vz = -3;
+      vz = -this.speed;
     } else {
       vz = 0;
     }
     if (keyIsDown(68)) {
-      vx = 3;
+      vx = this.speed;
     } else if (keyIsDown(65)) {
-      vx = -3;
+      vx = -this.speed;
     } else {
       vx = 0;
     }
@@ -173,6 +179,10 @@ class Player {
     return newLookingVector;
   }
 
+  setTomatoInterference(n) {
+    this.speed = PLAYER_SPEED * (1 - (n / 5))
+  }
+
   move() {
     let newLookingVector = this.get2dLooking();
     let zAxis = newLookingVector;
@@ -185,9 +195,9 @@ class Player {
 
     this.vel.y += this.accY;
     this.pos.y += this.vel.y;
-    if (this.pos.y >= GROUND) {
+    if (this.pos.y >= GROUND + PLAYER_SIZE / 2) {
       this.vel.y = 0
-      this.pos.y = GROUND
+      this.pos.y = GROUND + PLAYER_SIZE / 2
     }
 
     this.deathTimer--
@@ -232,10 +242,10 @@ class Player {
     }
   }
 
-  damage(amount) {
+  damage(amount, source) {
     this.health -= amount;
     if (this.health <= 0) {
-      this.die()
+      this.die(source)
     }
   }
 
@@ -243,8 +253,20 @@ class Player {
     return this.ammo > 0 && this.shootTimer <= 0 && this.weapon === TOMATO
   }
 
-  die() {
+  die(killer) {
     this.deathTimer = RESPAWN_TIMER
+    if (this.hasBattery) {
+      droppedBatteries.push(
+        new DroppedBattery(this.pos.copy())
+      )
+      this.hasBattery = false
+    }
+    this.deaths++
+    if (killer !== undefined) {
+      killer.kills++
+      console.log(killer.id + " kills: " + killer.kills)
+    }
+    console.log(this.id + " deaths: " + this.deaths)
   }
 
   isDead() {
@@ -274,11 +296,11 @@ class Player {
   }
 
   pickupBattery() {
-    this.hasBattery = true
+    this.hasBattery = true && !this.isDead()
   }
 
   dropBattery() {
-    this.hasBattery = false
+    this.hasBattery = false && !this.isDead()
   }
 
   respawn() {
