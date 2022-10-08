@@ -1,8 +1,23 @@
+<<<<<<< HEAD
 const PLAYER_SIZE = 50;
 const PROJECTILE_SPEED = 4;
 const PLAYER_MAX_HEALTH = 100;
 const PROJECTILE_DAMAGE = 20;
 const MAX_AMMO = 20;
+=======
+/*
+@file player.js
+@author entire team
+@date 10/7/2022
+@brief Defines player behavior
+*/
+
+const PLAYER_SIZE = 50
+const PROJECTILE_SPEED = 4
+const PLAYER_MAX_HEALTH = 100
+const PROJECTILE_DAMAGE = 20
+const MAX_AMMO = 20
+>>>>>>> 00289946c2efcdd03cee5654ddffaa43701f1f38
 
 class Player {
   constructor(id, x, y, z) {
@@ -80,6 +95,7 @@ class Player {
     );
   }
 
+  //basic movement
   doInput() {
     let vx = 0;
     let vy = 0;

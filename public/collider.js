@@ -1,3 +1,10 @@
+/*
+@file collider.js
+@author Craig
+@date 10/7/2022
+@brief Collider math
+*/
+
 class SphereCollider {
     constructor(pos, size) {
         this.pos = pos

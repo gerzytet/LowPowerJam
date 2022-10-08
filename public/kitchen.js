@@ -1,3 +1,10 @@
+/*
+@file kitchen.js
+@author Craig
+@date 10/7/2022
+@brief Defines kitchen objects
+*/
+
 const KITCHEN_RADIUS = 120
 const KITCHEN_SIZE = 30
 
