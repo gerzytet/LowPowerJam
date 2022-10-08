@@ -82,6 +82,10 @@ document.addEventListener(
   false
 );
 
+document.addEventListener(
+  "keydown", function(event){event.preventDefault()}
+)
+
 function findPlayer(id) {
   for (let i = 0; i < players.length; i++) {
     if (id === players[i].id) {
@@ -126,9 +130,11 @@ function mouseMoved(event) {
 
 let TOMATO_OBJ
 let SPOON_OBJ
+let CHARECTER_OBJ
 function preload(){
   TOMATO_OBJ = loadModel('models/Tomato.obj', true);
   SPOON_OBJ = loadModel('models/spoon.obj', true);
+  CHARECTER_OBJ = loadModel('models/Player.obj', true);
 }
 
 function setup() {
@@ -539,6 +545,7 @@ function drawGame() {
     translate(0, GROUND, 0)
     plane(2000, 2000)
   pop()
+  updateUI(socket.id);
 }
 
 function doLobbyInput() {

@@ -28,7 +28,7 @@ const threeKey = 51;
 class Player {
   constructor(id, x, y, z) {
     this.id = id;
-    this.name = "Hi";
+    this.name = "player" + players.length;
     this.kills = 0;
     this.pos = createVector(x, y, z);
     this.vel = createVector(0, 0, 0);
@@ -60,19 +60,22 @@ class Player {
     push();
       translate(this.pos);
       rotateY(-1 * this.get2dLooking().heading());
-      fill(255 * (this.health / PLAYER_MAX_HEALTH), 0, 0);
+      rotateZ(PI);
+      fill(255 * (this.health / PLAYER_MAX_HEALTH), 0, 255 * (this.health / PLAYER_MAX_HEALTH));
       stroke(255);
-      box(PLAYER_SIZE);
+      //box(PLAYER_SIZE);
+      scale(0.38);
+      model(CHARECTER_OBJ);
     pop();
 
     push();
     translate(
-      this.pos.x + this.looking.x * 25,
-      this.pos.y,
-      this.pos.z + this.looking.z * 25
+      this.pos.x + this.looking.x * 10,
+      this.pos.y - 30,
+      this.pos.z + this.looking.z * 10
     );
     fill(0);
-    sphere(10);
+    sphere(3);
     pop();
   }
 
@@ -144,6 +147,13 @@ class Player {
 
     if (keyIsDown(32) && this.pos.y == GROUND + PLAYER_SIZE / 2) {
       vy = -8
+    }
+
+    if(keyIsDown(9)){
+      tab_bool = true;
+    }
+    else{
+      tab_bool = false;
     }
 
     if (this.last_vx !== vx || this.last_vy !== vy || this.last_vz !== vz) {
