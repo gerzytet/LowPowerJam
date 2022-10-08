@@ -5,7 +5,7 @@
 @brief File that renders graphics
 */
 
-var sounds = ['public/sounds/laserBeam.mp3'];
+var sounds = ['sounds/laserBeam.mp3'];
 
 var testSound = new Howl({
 	src: [sounds[0]],
