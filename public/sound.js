@@ -16,6 +16,9 @@ class SoundEntity {
         this.sound.style.display = "none";
         this.source = src;
         document.body.appendChild(this.sound);
+        this.x = 0;
+        this.y = 0;
+        this.z = 0;
     }
     play(){
         this.sound.play();

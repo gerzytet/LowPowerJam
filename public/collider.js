@@ -37,6 +37,15 @@ class WallCollider {
         this.p2 = p2
         //this.y = y
         //this.height = height
+
+        //wall collision doesn't work properly with walls perfectly aligned with the x or z axis
+        //workaround:
+        if (p1.x === p2.x) {
+            p2.x += 0.01
+        }
+        if (p1.y === p2.y) {
+            p2.y += 0.01
+        }
     }
 
     isColliding(other) {
@@ -75,6 +84,9 @@ class WallCollider {
             let Py1 = (-D*dx + abs(dy)*sqrt(triangle)) / (dr*dr)
             let Py2 = (-D*dx - abs(dy)*sqrt(triangle)) / (dr*dr)
 
+            Py1 *= -1
+            Py2 *= -1
+
             function sign(x) {
                 if (x < 0) {
                     return -1
@@ -82,13 +94,18 @@ class WallCollider {
                 return 1
             }
 
+            let mx = min(x1, x2)
+            let Mx = max(x1, x2)
+            let my = min(y1, y2)
+            let My = max(y1, y2)
             if (
-                ((Px1 > max(x1, x2) && Py1 > max(y1, y2)) || (Px1 < min(x1, x2) && Py1 < min(y1, y2))) &&
-                ((Px2 > max(x1, x2) && Py2 > max(y1, y2)) || (Px2 < min(x1, x2) && Py2 < min(y1, y2)))
+                (Px1 >= mx && Px1 <= Mx && Py1 >= my && Py1 <= My) ||
+                (Px2 >= mx && Px2 <= Mx && Py2 >= my && Py2 <= My)
             ) {
-                return false
+                return true
             }
-            return true
+
+            return false
         }
     }
 

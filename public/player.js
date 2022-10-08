@@ -10,6 +10,7 @@ const PROJECTILE_SPEED = 4;
 const PLAYER_MAX_HEALTH = 100;
 const PROJECTILE_DAMAGE = 20;
 const MAX_AMMO = 20;
+const PLAYER_GRAVITY = 0.4
 
 class Player {
   constructor(id, x, y, z) {
@@ -17,11 +18,10 @@ class Player {
     this.pos = createVector(x, y, z);
     this.vel = createVector(0, 0, 0);
     this.looking = createVector(0, 0, 1); //x, z
-    this.groundedS = 50;
     this.health = PLAYER_MAX_HEALTH;
     this.ammo = 10;
 
-    this.accY = 0.98;
+    this.accY = PLAYER_GRAVITY;
 
     this.shootTimer = 0;
 
@@ -32,6 +32,10 @@ class Player {
     this.last_vz = 0;
     this.tomato_timer = document.getElementById("tomato_wait");
     this.tomato_timer.max = this.shootTimerMax;
+
+    
+    this.Health_Bar = document.getElementById("Health_Bar");
+    this.Health_Bar.max = PLAYER_MAX_HEALTH;
   }
 
   render() {
@@ -39,6 +43,10 @@ class Player {
       this.shootTimer -= 0.1;
     }
     this.tomato_timer.value = this.shootTimer;
+    
+    if(this.Health_Bar.value != this.health){
+      this.Health_Bar.value += (this.health> this.Health_Bar.value) ? 1 : -1;
+    }
 
     this.doInput();
     push();
@@ -90,7 +98,7 @@ class Player {
   //basic movement
   doInput() {
     let vx = 0;
-    let vy = 0;
+    let vy = this.vel.y;
     let vz = 0;
 
     if (keyIsDown(87)) {
@@ -108,15 +116,8 @@ class Player {
       vx = 0;
     }
 
-    if (keyIsDown(32) && this.groundedS > 0) {
-      vy = -3;
-    } else {
-      if (this.groundedS == 50) {
-        vy = 0;
-      } else {
-        this.groundedS = 0;
-        vy = 3;
-      }
+    if (keyIsDown(32) && this.pos.y == GROUND) {
+      vy = -8
     }
 
     if (last_vx !== vx || last_vy !== vy || last_vz !== vz) {
@@ -148,14 +149,15 @@ class Player {
     this.pos.x += xAxis.x + zAxis.x;
     this.pos.z += xAxis.y + zAxis.y;
 
-    if (this.pos.y >= -50) {
-      this.groundedS = 50;
-    } else {
-      this.groundedS -= 1;
-    }
-
-    this.pos.y += this.vel.y;
     this.vel.y += this.accY;
+    this.pos.y += this.vel.y;
+    console.log(this.pos.y)
+    if (this.pos.y >= GROUND) {
+      console.log("hit ground");
+      this.vel.y = 0
+      this.pos.y = GROUND
+    }
+    console.log(this.pos.y + " " + this.vel.y)
   }
 
   pan(panAmount, tiltAmount) {

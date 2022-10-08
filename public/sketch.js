@@ -5,11 +5,16 @@
 @brief File that renders graphics
 */
 
-/*var explosionSound = new Howl({
-	src:"library/sound.mp3",
+var sounds = ['public/sounds/laserBeam.mp3'];
+
+var testSound = new Howl({
+	src: [sounds[0]],
 	loop: false,
-	volume: 0.2
-});*/
+	volume: 0.5
+});
+
+//4 levels, multiplied 1-4 depending on distance
+let soundMultiplier = 0.25
 
 let cnv;
 let cam;
@@ -80,6 +85,7 @@ function mousePressed() {
         socket.emit("shoot", {});
         player.ammo--;
         player.shootTimer = player.shootTimerMax;
+        testSound.play();
       }
     }
   }
@@ -93,10 +99,18 @@ function mouseMoved(event) {
   }
 }
 
+//!Don't move this!
+/*
+function preload(){
+
+}
+*/
+
 function setup() {
   socket = io.connect();
   lobbies = [];
-  pointerLock = false;  initMaps()
+  pointerLock = false;
+  initMaps()
 
   socket.on("tick", function (data) {
     for (let i = 0; i < data.events.length; i++) {
@@ -254,6 +268,16 @@ function doCollisionMovePlayers() {
       ) {
         projectiles.splice(i, 1);
         players[j].damage(PROJECTILE_DAMAGE);
+        i--;
+        break
+      }
+    }
+  }
+
+  for (var i = 0; i < projectiles.length; i++) {
+    for (var j = 0; j < walls.length; j++) {
+      if (projectiles[i].getCollider().isColliding(walls[j].getCollider())) {
+        projectiles.splice(i, 1);
         i--;
         break
       }

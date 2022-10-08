@@ -23,6 +23,18 @@ body {
     z-index: 10;
     visibility: inherit;
   }
+  #Health_Bar{    
+    position: fixed;
+    top: 5%;
+    left: 10%;
+    width: 80px;
+    height: 40px;
+    margin-left: -15px;
+    margin-top: -1px;
+    background: red;
+    z-index: 10;
+    visibility: inherit;
+  }
 
   #cursor1 {
     position: fixed;
