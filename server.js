@@ -133,7 +133,6 @@ function newConnection(socket) {
   function joinLobby(data) {
     var player = socket.id
     var lobby = data.lobby
-    console.log(lobbies[lobby])
     lobbies[lobby].players.push(player)
   }
 
@@ -147,6 +146,8 @@ function newConnection(socket) {
       s.join("game" + lobbyIndex)
       events[lobbyIndex].push({type: "PlayerJoin", id: players[i]})
     }
-    io.to("game" + lobbyIndex).emit("startGame", {})
+    io.to("game" + lobbyIndex).emit("startGame", {
+      map: data.map
+    })
   }
 }

@@ -20,20 +20,20 @@ class Player {
   }
 
   render() {
-    this.doInput();
-    push();
-      translate(this.pos);
-      rotateY(-1*this.get2dLooking().heading());
-      fill(255 * (this.health / PLAYER_MAX_HEALTH), 0, 0);
-      stroke(255);
-      box(PLAYER_SIZE);
-    pop();
+    this.doInput()
+    push()
+      translate(this.pos)
+      rotateY(-1*this.get2dLooking().heading())
+      fill(255 * (this.health / PLAYER_MAX_HEALTH), 255 * (this.health / PLAYER_MAX_HEALTH), 0)
+      stroke(255)
+      box(PLAYER_SIZE)
+    pop()
 
     push();
       translate(this.pos.x+(this.looking.x*25), this.pos.y, this.pos.z+(this.looking.z*25));
-      fill(0);
-      sphere(10);
-    pop();
+      fill(0)
+      sphere(10)
+    pop()
   }
 
   tiltCamera(angle) {

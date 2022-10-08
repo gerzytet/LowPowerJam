@@ -18,7 +18,6 @@ let last_vy
 let last_vz
 
 const NUM_LOBBIES = 6
-
 const LOBBY_SELECT = 0
 const LOBBY = 1
 const GAME = 2
@@ -30,9 +29,13 @@ const renderColliders = false
 /******GAMESTATE ZONE*****/
 let players = []
 let projectiles = []
-let kitchens = []
 /******GAMESTATE ZONE*****/
 
+/**MAP ZONE*/
+let kitchens = []
+let walls = []
+let spawnPoint
+/**MAP ZONE*/
 
 let lobbies
 let pointerLock
@@ -93,12 +96,12 @@ function setup() {
   socket = io.connect();
   lobbies = []
   pointerLock = false
+  initMaps()
 
   socket.on("tick", function (data) {
     for (let i = 0; i < data.events.length; i++) {
       if (data.events[i].type === "PlayerJoin") {
-        players.push(new Player(data.events[i].id, 0, -50, -100));
-        console.log(players);
+        players.push(new Player(data.events[i].id, spawnPoint.x, spawnPoint.y, spawnPoint.z));
       }
       if (
         data.events[i].type === "CatchingUpNewPlayer" &&
@@ -129,8 +132,6 @@ function setup() {
           let vel = createVector(dataProjectile.vel.x, dataProjectile.vel.y, dataProjectile.vel.z)
           projectiles.push(new Projectile(pos, vel))
         }
-
-        console.log(players);
       }
       if (data.events[i].type === "PlayerChangeVelocity") {
         for (let j = 0; j < players.length; j++) {
@@ -177,16 +178,31 @@ function setup() {
 
   socket.on('startGame', function (data) {
     menuState = GAME
+    loadMap(data.map)
     setupGame()
   })
 
   setupMainMenu()
 }
 
-function updateGamestate() {
-  for (var i = 0; i < players.length; i++) {
-    players[i].move()
+function loadMap(index) {
+  console.log("Loading map " + index)
+  let map = maps[index]
+  for (let i = 0; i < map.objects.length; i++) {
+    let object = map.objects[i]
+    if (object instanceof Wall) {
+      walls.push(object)
+    }
+    else if (object instanceof Kitchen) {
+      kitchens.push(object)
+    } else {
+      console.log("HI")
+    }
   }
+  spawnPoint = map.playerSpawn
+}
+
+function updateGamestate() {
   for (var i = 0; i < projectiles.length; i++) {
     if (projectiles[i].isDespawned()) {
       projectiles.splice(i, 1)
@@ -196,16 +212,25 @@ function updateGamestate() {
     }
   }
 
-  doCollision()
+  doCollisionMovePlayers()
 }
 
-function doCollision() {
+function doCollisionMovePlayers() {
   for (var i = 0; i < projectiles.length; i++) {
     for (var j = 0; j < players.length; j++) {
       if (projectiles[i].owner != players[j].id && projectiles[i].getCollider().isColliding(players[j].getCollider())) {
         projectiles.splice(i, 1)
         players[j].damage(PROJECTILE_DAMAGE)
         i--
+        break
+      }
+    }
+
+    for (var j = 0; j < walls.length; j++) {
+      if (projectiles[i].getCollider().isColliding(walls[j].getCollider())) {
+        projectiles.splice(i, 1)
+        i--
+        break
       }
     }
   }
@@ -214,6 +239,19 @@ function doCollision() {
     for (var j = 0; j < players.length; j++) {
       if (kitchens[i].getCollider().isColliding(players[j].getCollider())) {
         kitchens[i].regeneratePlayer(players[j])
+      }
+    }
+  }
+
+  for (var i = 0; i < players.length; i++) {
+    let player = players[i]
+    let oldPos = player.pos.copy()
+    player.move()
+
+    for (let j = 0; j < walls.length; j++) {
+      if (player.getCollider().isColliding(walls[j].getCollider())) {
+        player.pos = oldPos
+        break
       }
     }
   }
@@ -243,8 +281,6 @@ function setupGame() {
   let eyeZ = ((height/2) / tan(PI/6));
   //perspective(PI/3, width/height, eyeZ/10 - 20, eyeZ*10);
   perspective()
-
-  kitchens.push(new HealthKitchen(createVector(100, 0, 100)), new TomatoKitchen(createVector(-100, 0, -100)))
 }
 
 function drawGame() {
@@ -266,10 +302,10 @@ function drawGame() {
       players[i].getCollider().render()
     }
 
-    new WallCollider(createVector(0, 0), createVector(100, 100)).render()
-    if (players[i].getCollider().isColliding(new WallCollider(createVector(0, 0), createVector(100, 100)))) {
-      console.log("Colliding")
-    }
+    //new Wall(createVector(0, 0), createVector(100, 100)).render()
+    //if (players[i].getCollider().isColliding(new Wall(createVector(0, 0), createVector(100, 100)).getCollider())) {
+    //  console.log("Colliding")
+    //}
     players[i].render();
   }
 
@@ -287,6 +323,10 @@ function drawGame() {
     kitchens[i].render()
   }
 
+  for (let i = 0; i < walls.length; i++) {
+    walls[i].render()
+  }
+
 
   debugMode();
 
@@ -302,7 +342,8 @@ function doLobbyInput() {
   if (keyIsDown("H".charCodeAt())) {
     console.log("H pressed");
     socket.emit("startGame", {
-      lobby: myLobbyIndex
+      lobby: myLobbyIndex,
+      map: 0
     })
   }
 }
