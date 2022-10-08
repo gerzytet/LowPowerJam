@@ -16,7 +16,7 @@ function updateUI(id){
     }
     
     let tomato_timer = document.getElementById("tomato_wait");
-    tomato_timer.max = SHOOT_TIMER_MAX;
+    tomato_timer.max = TOMATO_SHOOT_TIMER;
     
     let Health_Bar = document.getElementById("Health_Bar");
     Health_Bar.max = PLAYER_MAX_HEALTH;

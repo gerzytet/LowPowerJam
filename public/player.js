@@ -8,7 +8,8 @@
 const PLAYER_SIZE = 50;
 const PROJECTILE_SPEED = 4;
 const PLAYER_MAX_HEALTH = 100;
-const SHOOT_TIMER_MAX = 2;
+const TOMATO_SHOOT_TIMER = 2;
+const SPOON_SHOOT_TIMER = 3
 const PROJECTILE_DAMAGE = 20;
 const MAX_AMMO = 20;
 const PLAYER_GRAVITY = 0.4
@@ -44,7 +45,6 @@ class Player {
     this.last_vy = 0;
     this.last_vz = 0;
     
-
     this.hasBattery = false
     this.batteryTimer = BATTERY_TIMER
     this.dead = false
@@ -57,10 +57,6 @@ class Player {
   }
 
   render() {
-    if (!this.canShoot() && this.shootTimer >= 0) {
-      this.shootTimer -= 0.1;
-    }
-
     push();
       translate(this.pos);
       rotateY(-1 * this.get2dLooking().heading());
@@ -109,6 +105,9 @@ class Player {
 
   //basic movement
   doInput() {
+    if (!this.canShoot() && this.shootTimer >= 0) {
+      this.shootTimer -= 0.1;
+    }
     
     if (this.isDead()) {
       return
@@ -138,9 +137,12 @@ class Player {
     }else if (keyIsDown(twoKey)){
       socket.emit('changeWeapon', {weapon: PLATE})
       console.log("PLATE sent from " + socket.id)
+    } else if (keyIsDown(threeKey)){
+      socket.emit('changeWeapon', {weapon: SPOON})
+      console.log("SPOON sent from " + socket.id)
     }
 
-    if (keyIsDown(32) && this.pos.y == GROUND) {
+    if (keyIsDown(32) && this.pos.y == GROUND + PLAYER_SIZE / 2) {
       vy = -8
     }
 
@@ -217,11 +219,14 @@ class Player {
   }
 
   getShootProjectile() {
+    if (this.weapon === SPOON) {
+      return new SpoonProjectile(this.id)
+    }
     return new Projectile(
       this.pos.copy(),
       this.looking.copy().mult(PROJECTILE_SPEED),
       this.id
-    );
+    )
   }
 
   getCollider() {
@@ -240,7 +245,7 @@ class Player {
   }
 
   canShoot() {
-    return this.ammo > 0 && this.shootTimer <= 0 && this.weapon === TOMATO;
+    return this.ammo > 0 && this.shootTimer <= 0 && this.weapon !== PLATE;
   }
 
   die(killer) {
@@ -300,6 +305,14 @@ class Player {
 
   changeWeapon(weapon) {
     this.weapon = weapon;
+  }
+
+  getMaxShootTimer() {
+    if (this.weapon === SPOON) {
+      return SPOON_SHOOT_TIMER
+    } else {
+      return TOMATO_SHOOT_TIMER
+    }
   }
 
   /*

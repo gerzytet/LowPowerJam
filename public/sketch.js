@@ -45,7 +45,7 @@ const GAME = 2
 const MAIN_MENU = 3
 let menuState = MAIN_MENU
 let myLobbyIndex = -1
-const renderColliders = true
+const renderColliders = false
 
 /******GAMESTATE ZONE*****/
 let players = []
@@ -99,8 +99,8 @@ function mousePressed() {
       let player = findPlayer(socket.id);
       if (player.canShoot()) {
         socket.emit("shoot", {});
-        player.ammo--;
-        player.shootTimer = SHOOT_TIMER_MAX;
+        if (player.weapon === TOMATO)  player.ammo--;
+        player.shootTimer = player.getMaxShootTimer()
         //var volMult = soundMultiplier * dist(player.x, player.y, player.z, )
       }
     }
@@ -125,14 +125,16 @@ function mouseMoved(event) {
 }
 
 let TOMATO_OBJ
+let SPOON_OBJ
 function preload(){
   TOMATO_OBJ = loadModel('models/Tomato.obj', true);
+  SPOON_OBJ = loadModel('models/spoon.obj', true);
 }
 
 function setup() {
-  socket = io.connect();
-  lobbies = [];
-  pointerLock = false;
+  socket = io.connect()
+  lobbies = []
+  pointerLock = false
   initMaps()
 
   socket.on("tick", function (data) {
@@ -356,7 +358,7 @@ function doCollisionMovePlayers() {
   for (let i = 0; i < players.length; i++) {
     let count = 0
     for (let j = 0; j < projectiles.length; j++) {
-      if (projectiles[j].isDead()) {
+      if (projectiles[j] instanceof Projectile && projectiles[j].isDead()) {
         if (projectiles[j].getPlayerSlowCollider().isColliding(players[i].getCollider())) {
           count++
         }
@@ -370,11 +372,16 @@ function doCollisionMovePlayers() {
   for (var i = 0; i < projectiles.length; i++) {
     for (var j = 0; j < walls.length; j++) {
       if (projectiles[i].getWallFloorCollider().isColliding(walls[j].getCollider())) {
-        //projectiles.splice(i, 1);
-        //i--;
-        //break
 
-        projectiles[i].dead = true
+
+        if (projectiles[j] instanceof Projectile) {
+          projectiles[i].dead = true
+        } else {
+          projectiles.splice(i, 1);
+          i--;
+          break
+        }
+        
       }
     }
   }

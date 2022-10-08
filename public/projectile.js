@@ -82,3 +82,50 @@ class Projectile {
     return this.dead
   }
 }
+
+const SPOON_SIZE = 10
+const SPOON_TIMEOUT = 10
+
+class SpoonProjectile {
+  constructor(owner) {
+    this.owner = owner
+    this.move()
+    this.dead = false
+    this.timer = 10
+  }
+
+  getPlayer() {
+    return findPlayer(this.owner)
+  }
+
+  render() {
+    push()
+      translate(this.pos.copy().add(this.getPlayer().looking.copy().mult(20)))
+      scale(SPOON_SIZE / 50)
+      rotateZ(PI)
+      rotateY(this.getPlayer().get2dLooking().heading() + PI / 2)
+      model(SPOON_OBJ)
+    pop()
+  }
+
+  move() {
+    this.pos = this.getPlayer().pos.copy().add(this.getPlayer().looking.copy().mult(60))
+    this.timer--
+  }
+
+  getCollider() {
+    if (this.isDead()) {
+      return new NullCollider()
+    } else {
+      return new SphereCollider(this.pos, SPOON_SIZE)
+    }
+  }
+
+  getWallFloorCollider() {
+    return this.getCollider()
+  }
+
+  isDead() {
+    return this.dead || this.timer <= 0
+  }
+}
