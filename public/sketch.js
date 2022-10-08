@@ -228,14 +228,14 @@ function setup() {
           for (let j = 0; j < kitchens.length; j++) {
             let kitchen = kitchens[j]
             if (kitchen.hasBatterySlot() && kitchen.batterySlot.getCollider().isColliding(player.getCollider())) {
-              if (player.hasBattery && !kitchen.batterySlot.hasBattery) {
+              if (player.canDropBattery() && !kitchen.batterySlot.hasBattery) {
                 kitchen.batterySlot.hasBattery = true
-                player.hasBattery = false
+                player.dropBattery()
                 break
               }
-              if (!player.hasBattery && kitchen.batterySlot.hasBattery) {
+              if (player.canPickupBattery() && kitchen.batterySlot.hasBattery) {
                 kitchen.batterySlot.hasBattery = false
-                player.hasBattery = true
+                player.pickupBattery()
                 break
               }
             }
@@ -357,7 +357,7 @@ function doCollisionMovePlayers() {
   //kitchen collision
   for (var i = 0; i < kitchens.length; i++) {
     for (var j = 0; j < players.length; j++) {
-      if (kitchens[i].getCollider().isColliding(players[j].getCollider())) {
+      if (kitchens[i].isOn() && kitchens[i].getCollider().isColliding(players[j].getCollider())) {
         kitchens[i].regeneratePlayer(players[j]);
       }
     }
