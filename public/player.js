@@ -32,7 +32,6 @@ class Player {
     this.last_vz = 0;
     this.tomato_timer = document.getElementById("tomato_wait");
     this.tomato_timer.max = this.shootTimerMax;
-
     
     this.Health_Bar = document.getElementById("Health_Bar");
     this.Health_Bar.max = PLAYER_MAX_HEALTH;
@@ -193,6 +192,7 @@ class Player {
   damage(amount) {
     this.health -= amount;
     if (this.health <= 0) {
+      //display "You Lose! X players remaining!"
       this.health = PLAYER_MAX_HEALTH;
     }
   }

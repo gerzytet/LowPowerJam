@@ -58,6 +58,9 @@ function removePlayer(id) {
     if (index !== -1) {
       players.splice(index, 1);
     }
+    if (players.length === 0) {
+      lobbies[i].status = LOBBY_OPEN
+    }
   }
 }
 

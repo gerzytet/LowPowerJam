@@ -5,6 +5,15 @@
 @brief File that renders graphics
 */
 
+/*
+TODO:
+*List of players
+*Health/Death
+*Fix Firerate Bar UI element
+*Optimize performance
+*Win/lose condition
+*Disconnect (lobby is cleared out when there are zero clients)
+*/
 var sounds = ['sounds/laserBeam.mp3'];
 
 var testSound = new Howl({

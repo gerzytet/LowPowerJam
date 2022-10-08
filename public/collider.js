@@ -68,8 +68,8 @@ class WallCollider {
             let y2 = np2.y
             
             let r = other.size
-            let dx = x1 - x2
-            let dy = y1 - y2
+            let dx = x2 - x1
+            let dy = y2 - y1
             let dr = sqrt(dx*dx + dy*dy)
             let D = x1*y2 - x2*y1
             let triangle = r*r*dr*dr - D*D
@@ -83,9 +83,6 @@ class WallCollider {
 
             let Py1 = (-D*dx + abs(dy)*sqrt(triangle)) / (dr*dr)
             let Py2 = (-D*dx - abs(dy)*sqrt(triangle)) / (dr*dr)
-
-            Py1 *= -1
-            Py2 *= -1
 
             function sign(x) {
                 if (x < 0) {
@@ -112,16 +109,21 @@ class WallCollider {
     //vec is a player movement that collides with this wall
     //this pushes the vec against the wall
     moveAgainst(vec) {
-        let vecMag  = vec.mag()
-        let vecAngle = vec.heading()
+        let vec2d = vec.copy()
+        vec2d.y = vec2d.z
+        vec2d.z = 0
+
+        let vecMag  = vec2d.mag()
+        let vecAngle = vec2d.heading()
 
         let wallAngle = this.p1.copy().sub(this.p2).heading()
         let finalAngle = wallAngle - vecAngle
         let finalMag = vecMag * cos(finalAngle)
 
-        let ans = createVector(0, 0)
-        ans.x = finalMag * cos(finalAngle)
-        ans.y = finalMag * sin(finalAngle)
+        let ans = createVector(0, 0, 0)
+        ans.x = finalMag * cos(-wallAngle)
+        ans.y = vec.y
+        ans.z = finalMag * sin(wallAngle)
         return ans
     }
 
