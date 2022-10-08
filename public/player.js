@@ -8,13 +8,15 @@
 const PLAYER_SIZE = 50;
 const PROJECTILE_SPEED = 4;
 const PLAYER_MAX_HEALTH = 100;
-const PROJECTILE_DAMAGE = 20;
+const PROJECTILE_DAMAGE = 100;
 const MAX_AMMO = 20;
 const PLAYER_GRAVITY = 0.4
 
 class Player {
   constructor(id, x, y, z) {
     this.id = id;
+    this.name = "Hi";
+    this.kills = 0;
     this.pos = createVector(x, y, z);
     this.vel = createVector(0, 0, 0);
     this.looking = createVector(0, 0, 1); //x, z
@@ -151,7 +153,6 @@ class Player {
     this.vel.y += this.accY;
     this.pos.y += this.vel.y;
     if (this.pos.y >= GROUND) {
-      console.log("hit ground");
       this.vel.y = 0
       this.pos.y = GROUND
     }
@@ -192,6 +193,7 @@ class Player {
   damage(amount) {
     this.health -= amount;
     if (this.health <= 0) {
+      console.log("you died!");
       //display "You Lose! X players remaining!"
       this.health = PLAYER_MAX_HEALTH;
     }
@@ -214,4 +216,10 @@ class Player {
       this.ammo = MAX_AMMO;
     }
   }
+
+  /*
+  printName(i){
+    
+  }
+  */
 }

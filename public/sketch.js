@@ -14,6 +14,7 @@ TODO:
 *Win/lose condition
 *Disconnect (lobby is cleared out when there are zero clients)
 */
+
 var sounds = ['sounds/laserBeam.mp3'];
 
 var testSound = new Howl({
@@ -23,7 +24,7 @@ var testSound = new Howl({
 });
 
 //4 levels, multiplied 1-4 depending on distance
-let soundMultiplier = 0.25
+let soundMultiplier = 100;
 
 let cnv;
 let cam;
@@ -95,7 +96,6 @@ function mousePressed() {
         player.ammo--;
         player.shootTimer = player.shootTimerMax;
         //var volMult = soundMultiplier * dist(player.x, player.y, player.z, )
-        testSound.play();
       }
     }
   }
@@ -195,11 +195,22 @@ function setup() {
       }
 
       if (data.events[i].type === "shoot") {
+        let me = findPlayer(socket.id)
+        let volume
+        
         for (let j = 0; j < players.length; j++) {
           if (players[j].id === data.events[i].id) {
             projectiles.push(players[j].getShootProjectile());
+            volume = calculateVolume(players[j].pos.dist(me.pos))
           }
         }
+
+        var testSound = new Howl({
+          src: [sounds[0]],
+          loop: false,
+          volume: volume
+        })
+        testSound.play();
       }
     }
     updateGamestate();
@@ -219,6 +230,10 @@ function setup() {
   })
 
   setupMainMenu();
+}
+
+function calculateVolume (d){
+  return min(1, soundMultiplier / d);
 }
 
 function loadMap(index) {
