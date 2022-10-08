@@ -8,6 +8,7 @@
 const PLAYER_SIZE = 50;
 const PROJECTILE_SPEED = 4;
 const PLAYER_MAX_HEALTH = 100;
+const SHOOT_TIMER_MAX = 2;
 const PROJECTILE_DAMAGE = 20;
 const MAX_AMMO = 20;
 const PLAYER_GRAVITY = 0.4
@@ -33,22 +34,16 @@ class Player {
     this.looking = createVector(0, 0, 1); //x, z
     this.health = PLAYER_MAX_HEALTH;
     this.ammo = 10
-    this.weapon = TOMATO
+    this.weapon = TOMATO;
 
     this.accY = PLAYER_GRAVITY;
 
     this.shootTimer = 0;
 
-    this.shootTimerMax = 2;
-
     this.last_vx = 0;
     this.last_vy = 0;
     this.last_vz = 0;
-    this.tomato_timer = document.getElementById("tomato_wait");
-    this.tomato_timer.max = this.shootTimerMax;
     
-    this.Health_Bar = document.getElementById("Health_Bar");
-    this.Health_Bar.max = PLAYER_MAX_HEALTH;
 
     this.hasBattery = false
     this.batteryTimer = BATTERY_TIMER
@@ -64,11 +59,6 @@ class Player {
   render() {
     if (!this.canShoot() && this.shootTimer >= 0) {
       this.shootTimer -= 0.1;
-    }
-    this.tomato_timer.value = this.shootTimer;
-    
-    if(this.Health_Bar.value != this.health){
-      this.Health_Bar.value += (this.health> this.Health_Bar.value) ? 1 : -1;
     }
 
     push();
@@ -144,10 +134,10 @@ class Player {
     }
     if (keyIsDown(oneKey)){
       socket.emit('changeWeapon', {weapon: TOMATO})
-      console.log("TOMATO client " + socket.id)
+      console.log("TOMATO sent from " + socket.id)
     }else if (keyIsDown(twoKey)){
       socket.emit('changeWeapon', {weapon: PLATE})
-      console.log("PLATE client " + socket.id)
+      console.log("PLATE sent from " + socket.id)
     }
 
     if (keyIsDown(32) && this.pos.y == GROUND) {
@@ -250,7 +240,7 @@ class Player {
   }
 
   canShoot() {
-    return this.ammo > 0 && this.shootTimer <= 0 && this.weapon === TOMATO
+    return this.ammo > 0 && this.shootTimer <= 0 && this.weapon === TOMATO;
   }
 
   die(killer) {
@@ -309,7 +299,7 @@ class Player {
   }
 
   changeWeapon(weapon) {
-    this.weapon = weapon
+    this.weapon = weapon;
   }
 
   /*

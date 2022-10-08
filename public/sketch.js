@@ -100,7 +100,7 @@ function mousePressed() {
       if (player.canShoot()) {
         socket.emit("shoot", {});
         player.ammo--;
-        player.shootTimer = player.shootTimerMax;
+        player.shootTimer = SHOOT_TIMER_MAX;
         //var volMult = soundMultiplier * dist(player.x, player.y, player.z, )
       }
     }
@@ -250,6 +250,7 @@ function setup() {
       if (data.events[i].type === "PlayerChangeWeapon") {
         console.log("got change " + data.events[i].weapon + " " + data.events[i].id)
         let player = findPlayer(data.events[i].id)
+        console.log(player.id);
         player.changeWeapon(data.events[i].weapon)
       }
     }
@@ -329,6 +330,7 @@ function doCollisionMovePlayers() {
       ) {
         let isReflected = false
         if (players[j].weapon === PLATE) {
+          console.log(players[j].id + " relected");
           let incomingAngle = players[j].get2dLooking().angleBetween(
             createVector(-projectiles[i].vel.x, -projectiles[i].vel.z)
           )
@@ -516,8 +518,6 @@ function drawGame() {
     droppedBatteries[i].render()
   }
 
-
-  debugMode();
 
   push();
     translate(0, 0, 0);

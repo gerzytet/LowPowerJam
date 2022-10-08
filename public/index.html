@@ -15,7 +15,7 @@
       src="https://cdn.jsdelivr.net/npm/p5@1.4.1/lib/p5.min.js"
     ></script>
 
-    <div id="sketch-container"></div>
+    <!--<div id="sketch-container"></div>-->
 
      <!--Audio Stuff-->
      <audio controls class="no-bar" >
@@ -37,16 +37,27 @@
     <script type="text/javascript" src="maps.js"></script>
     <script type="text/javascript" src="projectile.js"></script>
     <script type="text/javascript" src="player.js"></script>
+    <script type="text/javascript" src="ui.js"></script>
     <script type="text/javascript" src="sketch.js"></script>
 
-    <div id="canvasUI">
-      <div id="cursor1"></div>
-
-      <div id="cursor2"></div>
-
-      
-      <meter id="Health_Bar" min="0" max="100" value="10"></meter>
-      <meter id="tomato_wait" min="0" max="100" value="10"></meter>
+    <div id="sketch-container">
+      <div id="canvasUI">
+        <div id="cursor1"></div>
+  
+        <div id="cursor2"></div>
+        
+        <meter id="Health_Bar" min="0" max="100" value="10"></meter>
+        <meter id="tomato_wait" min="0" max="100" value="10"></meter>
+  
+        <p id = "Death_Counter"></p>
+  
+        <div id="Player_list"></div>
+  
+        <div id="Tomato_Block"><p id="W1"></p><img id="tImg" src="images/Tomato.png"></img><p id="ammoCounter"></p></div>
+        <div id="Plate_Block"><p id="W2"></p><img id="pImg" src="images/Plate.png"></img></div>
+        <div id="Spoon_Block"><p id="W3"></p><img id="sImg" src="images/Spoon.png"></img></div>
+        
+      </div>
     </div>
   </body>
 </html>

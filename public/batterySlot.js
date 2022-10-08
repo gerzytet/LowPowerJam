@@ -1,3 +1,10 @@
+/*
+@file batterySlot.js
+@author Craig
+@date 10/7/2022
+@brief Battery mechanics
+*/
+
 const BATTERY_SLOT_SIZE = 10
 const BATTERY_SLOT_RADIUS = 20
 
