@@ -5,6 +5,25 @@ body {
   .no-bar {
     display: none;
   }
+  #canvasUI{
+    z-index: 10;
+    position: fixed;
+    visibility: hidden;
+  }
+
+  #tomato_wait{    
+    position: fixed;
+    top: 10%;
+    left: 10%;
+    width: 70px;
+    height: 20px;
+    margin-left: -15px;
+    margin-top: -1px;
+    background: white;
+    z-index: 10;
+    visibility: inherit;
+  }
+
   #cursor1 {
     position: fixed;
     top: 50%;
@@ -15,6 +34,8 @@ body {
     margin-top: -1px;
     background: white;
     z-index: 10;
+    visibility: inherit;
+    
   }
   #cursor2 {
     position: fixed;
@@ -26,4 +47,6 @@ body {
     margin-top: -15px;
     background: white;
     z-index: 10;
+    
+    visibility: inherit;
   }

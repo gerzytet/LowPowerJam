@@ -1,3 +1,10 @@
+/*
+@file sketch.js
+@author entire team
+@date 10/7/2022
+@brief Projectile properties
+*/
+
 const projectileSize = 10;
 
 class Projectile {
