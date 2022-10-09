@@ -502,7 +502,7 @@ function setupGame() {
   normalMaterial();
   let eyeZ = height / 2 / tan(PI / 6);
   //perspective(PI/3, width/height, eyeZ/10 - 20, eyeZ*10);
-  perspective()
+  //perspective()
 }
 
 let lastID
@@ -597,7 +597,7 @@ function doLobbyInput() {
   if (keyIsDown("H".charCodeAt()) && socket.id === lobbies[myLobbyIndex].players[0]) {
     socket.emit("startGame", {
       lobby: myLobbyIndex,
-      map: 0
+      map: 1
     })
   } else if (keyIsDown("Q".charCodeAt())) {
     socket.emit('quitLobby', {})
