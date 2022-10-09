@@ -214,6 +214,7 @@ function setup() {
           if (players[j].id === data.events[i].id) {
             projectiles.push(players[j].getShootProjectile());
             volume = calculateVolume(players[j].pos.dist(me.pos))
+            players[j].shootTimer = players[j].getMaxShootTimer()
           }
         }
 
@@ -274,7 +275,7 @@ function setup() {
       }
     }
     updateGamestate();
-    sendDiagnostic()
+    //sendDiagnostic()
   })
 
   socket.on("lobbyStatus", function (data) {
@@ -365,7 +366,7 @@ function doCollisionMovePlayers() {
         projectiles[i].getCollider().isColliding(players[j].getCollider())
       ) {
         let isReflected = false
-        if (players[j].weapon === PLATE) {
+        if (players[j].weapon === PLATE && projectiles[i] instanceof Projectile) {
           //console.log(players[j].id + " relected");
           let incomingAngle = players[j].get2dLooking().angleBetween(
             createVector(-projectiles[i].vel.x, -projectiles[i].vel.z)

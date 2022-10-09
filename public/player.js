@@ -102,6 +102,43 @@ class Player {
         text(this.name, 0, 0, 0)
       pop()
     }
+
+    push()
+      let newLookingVector = this.get2dLooking();
+      let zAxis = newLookingVector.copy();
+      let xAxis = zAxis.copy();
+      xAxis.rotate(PI / 2);
+      xAxis.z = xAxis.y
+      xAxis.y = 0
+      zAxis.z = zAxis.y
+      zAxis.y = 0
+
+      const ARM_SIZE = 30
+      let rotation = this.weapon !== TOMATO ? 0 : -map(max(this.shootTimer - (this.getMaxShootTimer() - this.shootTimer), 0), 0, this.getMaxShootTimer(), 0, PI  /2)
+      let down = sin(rotation) * ARM_SIZE / 2
+      let front = cos(rotation) * ARM_SIZE / 2
+      fill(109, 255, 248)
+      push()
+        translate(this.pos.copy().add(xAxis.copy().mult(PLAYER_SIZE/3)))
+        
+        translate(0, -PLAYER_SIZE/5 + down, 0)
+        translate(0, -PLAYER_SIZE/5, 0)
+        translate(zAxis.copy().mult(front))
+        rotateY(-newLookingVector.heading() - PI/2)
+        rotateX(rotation)
+        box(10, 10, ARM_SIZE)
+      pop()
+      push()
+        translate(this.pos.copy().sub(xAxis.copy().mult(PLAYER_SIZE/3)))
+        
+        translate(0, -PLAYER_SIZE/5 + down, 0)
+        translate(0, -PLAYER_SIZE/5, 0)
+        translate(zAxis.copy().mult(front))
+        rotateY(-newLookingVector.heading() - PI/2)
+        rotateX(rotation)
+        box(10, 10, ARM_SIZE)
+      pop()
+    pop()
   }
 
   getWallCollider() {
@@ -136,11 +173,7 @@ class Player {
   }
 
   //basic movement
-  doInput() {
-    if (!this.canShoot() && this.shootTimer >= 0) {
-      this.shootTimer -= 0.1;
-    }
-    
+  doInput() {    
     if (this.isDead()) {
       return
     }
@@ -235,6 +268,7 @@ class Player {
     if (this.deathTimer === 0) {
       this.respawn()
     }
+    this.shootTimer -= 0.1
   }
 
   pan(panAmount, tiltAmount) {
