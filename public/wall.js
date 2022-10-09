@@ -26,7 +26,9 @@ class Wall {
             let p2 = this.p1.copy().sub(this.p2)
             let angle = p1.angleBetween(p2) 
             rotateY(-angle)
-            fill(255, 255, 255, 100)
+            fill(100, 255)
+            stroke(0);
+            texture(WALL_PNG);
             box(width, height, 10)
         pop()
     }

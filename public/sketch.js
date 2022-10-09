@@ -8,8 +8,6 @@
 
 /*
 TODO:
-!Add all sounds and fix UI
-*List of players
 *Optimize performance
 *Win/lose condition
 *Disconnect (lobby is cleared out when there are zero clients)
@@ -143,6 +141,9 @@ let PLAYER_PNG
 let PLATE_OBJ
 let DROPPED_BATTERY_OBJ
 let HEALTH_OBJ
+let BATTERY_SLOT_OBJ;
+let WALL_PNG;
+let FLOOR_PNG;
 
 let MC_FONT
 function preload(){
@@ -155,7 +156,12 @@ function preload(){
 
   PLAYER_OBJ = loadModel('models/Player.obj', true)
   PLAYER_PNG = loadImage('images/player_mat.png')
-  
+
+  BATTERY_SLOT_OBJ = loadModel('models/bat_holder.obj', true);
+
+  WALL_PNG = loadImage('images/wall_mat_test.png');
+  FLOOR_PNG = loadImage('images/floor_mat.png');
+
   MC_FONT = loadFont('dogicapixel.otf')
 }
 
@@ -216,6 +222,7 @@ function setup() {
             projectiles.push(players[j].getShootProjectile());
             volume = calculateVolume(players[j].pos.dist(me.pos));
             w = players[j].weapon;
+            players[j].shootTimer = players[j].getMaxShootTimer()
           }
         }
 
@@ -286,7 +293,7 @@ function setup() {
       }
     }
     updateGamestate();
-    sendDiagnostic()
+    //sendDiagnostic()
   })
 
   socket.on("lobbyStatus", function (data) {
@@ -377,7 +384,7 @@ function doCollisionMovePlayers() {
         projectiles[i].getCollider().isColliding(players[j].getCollider())
       ) {
         let isReflected = false
-        if (players[j].weapon === PLATE) {
+        if (players[j].weapon === PLATE && projectiles[i] instanceof Projectile) {
           //console.log(players[j].id + " relected");
           let incomingAngle = players[j].get2dLooking().angleBetween(
             createVector(-projectiles[i].vel.x, -projectiles[i].vel.z)
@@ -392,6 +399,7 @@ function doCollisionMovePlayers() {
         }
         if (!isReflected) {
           
+          //
           if (projectiles[i] instanceof SpoonProjectile){
             var smackSound = new Howl({
               src: [sounds[3]],
@@ -562,6 +570,8 @@ function sendDiagnostic() {
 
 function drawGame() {
   mainMenuHtml.style.display = "none";
+  //ambientLight(255, 0, 0);
+  
   //windowResized()
 
   background(51,221,255)
@@ -615,15 +625,18 @@ function drawGame() {
     droppedBatteries[i].render()
   }
 
+  /* Jeremy
   push();
     translate(0, 0, 0);
     fill(0);
     stroke(255);
     box(40);
   pop();
+  */
 
   push()
-    fill(155, 50, 0, 100)
+    fill(155, 50, 0, 255);
+    texture(FLOOR_PNG);
     rotateX(PI/2)
     translate(0, GROUND, 0)
     plane(3000, 3000)
