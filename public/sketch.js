@@ -258,9 +258,9 @@ function setup() {
       }
 
       if (data.events[i].type === "PlayerChangeWeapon") {
-        console.log("got change " + data.events[i].weapon + " " + data.events[i].id)
+        //console.log("got change " + data.events[i].weapon + " " + data.events[i].id)
         let player = findPlayer(data.events[i].id)
-        console.log(player.id);
+        //console.log(player.id);
         player.changeWeapon(data.events[i].weapon)
       }
     }
@@ -328,7 +328,7 @@ function updateGamestate() {
     ctfTimer--
   }
 
-  console.log(teamPoints)
+  //console.log(teamPoints)
 
   let winner = getWinner()
   let player = findPlayer(socket.id)
@@ -357,7 +357,7 @@ function doCollisionMovePlayers() {
       ) {
         let isReflected = false
         if (players[j].weapon === PLATE) {
-          console.log(players[j].id + " relected");
+          //console.log(players[j].id + " relected");
           let incomingAngle = players[j].get2dLooking().angleBetween(
             createVector(-projectiles[i].vel.x, -projectiles[i].vel.z)
           )
@@ -502,7 +502,7 @@ function setupGame() {
   normalMaterial();
   let eyeZ = height / 2 / tan(PI / 6);
   //perspective(PI/3, width/height, eyeZ/10 - 20, eyeZ*10);
-  perspective()
+  //perspective()
 }
 
 let lastID
@@ -608,7 +608,11 @@ function doLobbyInput() {
   if (keyIsDown("H".charCodeAt()) && socket.id === lobbies[myLobbyIndex].players[0] && !hPressed) {
     socket.emit("startGame", {
       lobby: myLobbyIndex,
+<<<<<<< HEAD
       map: mapSelection
+=======
+      map: 1
+>>>>>>> 782deb2b8a2384d22127a2f09122bb9193158aa9
     })
     hPressed = true
   } else {
