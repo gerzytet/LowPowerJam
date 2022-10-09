@@ -41,7 +41,7 @@ function initMaps() {
 
     maps.push(
         {
-            playerSpawn: createVector(100, GROUND, 100),
+            playerSpawn: [createVector(100, GROUND, 100), createVector(400, GROUND, 400)],
             name: "Test Map",
             objects: [
                 new Wall(cv2(-100, -100), cv2(600, -100)),

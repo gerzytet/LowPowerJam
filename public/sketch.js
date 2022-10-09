@@ -587,6 +587,8 @@ function drawGame() {
 //I'm mPressed!
 let mPressed
 let tPressed
+let pPressed
+let hPressed
 function doLobbyInput() {
   if (mPressed === undefined) {
     mPressed = false
@@ -594,17 +596,31 @@ function doLobbyInput() {
   if (tPressed === undefined) {
     tPressed = false
   }
-  if (keyIsDown("H".charCodeAt()) && socket.id === lobbies[myLobbyIndex].players[0]) {
+  if (pPressed === undefined) {
+    pPressed = false
+  }
+  if (hPressed === undefined) {
+    hPressed = false
+  }
+  if (mapSelection === undefined) {
+    mapSelection = 0
+  }
+  if (keyIsDown("H".charCodeAt()) && socket.id === lobbies[myLobbyIndex].players[0] && !hPressed) {
     socket.emit("startGame", {
       lobby: myLobbyIndex,
-      map: 0
+      map: mapSelection
     })
-  } else if (keyIsDown("Q".charCodeAt())) {
+    hPressed = true
+  } else {
+    if (!keyIsDown("H".charCodeAt())) hPressed = false
+  }
+
+  if (keyIsDown("Q".charCodeAt())) {
     socket.emit('quitLobby', {})
     setupLobbySelect()
     menuState = LOBBY_SELECT
   }
-  if (keyIsDown("M".charCodeAt()) && !mPressed) {
+  if (keyIsDown("M".charCodeAt()) && socket.id === lobbies[myLobbyIndex].players[0] && !mPressed) {
     console.log('changing mode')
     socket.emit('changeGameMode', {
       gameMode: 1-lobbies[myLobbyIndex].gameMode
@@ -621,8 +637,18 @@ function doLobbyInput() {
   } else {
     if (!keyIsDown("T".charCodeAt())) tPressed = false
   }
+
+  if (keyIsDown("P".charCodeAt()) && socket.id === lobbies[myLobbyIndex].players[0] && !pPressed) {
+    console.log('changing map')
+    mapSelection++
+    mapSelection %= maps.length
+    pPressed = true
+  } else {
+    if (!keyIsDown("P".charCodeAt())) pPressed = false
+  }
 }
 
+let mapSelection
 function drawLobby() {
   background(100);
   push();
@@ -664,8 +690,10 @@ function drawLobby() {
   ), x, y);
   y += 32;
 
-  text("Press M to change gamemode", x, y)
-  y += 32
+  if (socket.id === lobbies[myLobbyIndex].players[0]) {
+    text("Press M to change gamemode", x, y)
+    y += 32
+  }
 
   text("You are " + socket.id, x, y)
   y += 32
@@ -674,6 +702,12 @@ function drawLobby() {
     text("Press T to change team", x, y)
     y += 32
   }
+
+  if (socket.id === lobbies[myLobbyIndex].players[0]) {
+    text("Current map: " + maps[mapSelection].name, x, y)
+    y += 32
+  }
+
   pop();
 
   doLobbyInput();
