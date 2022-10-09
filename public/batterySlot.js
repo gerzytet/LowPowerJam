@@ -16,14 +16,26 @@ class BatterySlot {
 
     render() {
         push()
-            translate(this.pos)
-            if (this.hasBattery) {
-                fill(0, 255, 0)
-            } else {
-                fill(0, 0, 0)
-            }
-            box(BATTERY_SLOT_SIZE)
+            translate(this.pos.x, this.pos.y+21, this.pos.z);
+            fill(0, 0, 0)
+            strokeWeight(0.1);
+            stroke(255);
+            rotateZ(PI);
+            scale(0.3);
+            model(BATTERY_SLOT_OBJ);
         pop()
+        if (this.hasBattery) {
+            push()
+                translate(this.pos.x, this.pos.y+13, this.pos.z);
+                fill(255, 255, 0);
+                strokeWeight(0.1);
+                stroke(0);
+                rotateZ(PI);
+                rotateY(frameCount / 20)
+                scale(0.16);
+                model(DROPPED_BATTERY_OBJ);
+            pop();
+        }
     }
 
     getCollider() {

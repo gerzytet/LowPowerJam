@@ -8,15 +8,13 @@
 
 /*
 TODO:
-!Add all sounds and fix UI
-*List of players
 *Optimize performance
 *Win/lose condition
 *Disconnect (lobby is cleared out when there are zero clients)
 */
 
 //Interact = Clicking UI, Smack = Spoon collision, Splat = Tomato collision, Swish = Spoon failed collision
-var sounds = ['sounds/interact.mp3', 'sounds/low_throw.mp3', 'sounds/medium_throw.mp3', 'sounds/high_throw.mp3', 'sounds/smack.mp3', 'sounds/splat.mp3', 
+var sounds = ['sounds/low_throw.mp3', 'sounds/medium_throw.mp3', 'sounds/high_throw.mp3', 'sounds/smack.mp3', 'sounds/splat.mp3', 
 'sounds/swish.mp3'];
 
 /*
@@ -143,6 +141,9 @@ let PLAYER_PNG
 let PLATE_OBJ
 let DROPPED_BATTERY_OBJ
 let HEALTH_OBJ
+let BATTERY_SLOT_OBJ;
+let WALL_PNG;
+let FLOOR_PNG;
 
 let MC_FONT
 function preload(){
@@ -155,7 +156,12 @@ function preload(){
 
   PLAYER_OBJ = loadModel('models/Player.obj', true)
   PLAYER_PNG = loadImage('images/player_mat.png')
-  
+
+  BATTERY_SLOT_OBJ = loadModel('models/bat_holder.obj', true);
+
+  WALL_PNG = loadImage('images/wall_mat_test.png');
+  FLOOR_PNG = loadImage('images/floor_mat.png');
+
   MC_FONT = loadFont('dogicapixel.otf')
 }
 
@@ -210,39 +216,51 @@ function setup() {
         let me = findPlayer(socket.id)
         let volume
         
+        var w;
         for (let j = 0; j < players.length; j++) {
           if (players[j].id === data.events[i].id) {
             projectiles.push(players[j].getShootProjectile());
-            volume = calculateVolume(players[j].pos.dist(me.pos))
+            volume = calculateVolume(players[j].pos.dist(me.pos));
+            w = players[j].weapon;
             players[j].shootTimer = players[j].getMaxShootTimer()
           }
         }
 
-        var lowThrow = new Howl({
-          src: [sounds[1]],
-          loop: false,
-          volume: volume
-        })
-        var mediumThrow = new Howl({
-          src: [sounds[2]],
-          loop: false,
-          volume: volume
-        })
-        var highThrow = new Howl({
-          src: [sounds[3]],
-          loop: false,
-          volume: volume
-        })
-        
-        //hive mind code
-        //60% chance normal, 20% high, 20% low
-        var r = Math.random()
-        if (r < 0.20) {
-          lowThrow.play();
-        } else if (r < 0.40) {
-          mediumThrow.play();
-        } else {
-          highThrow.play();
+        //plays sound according to weapon
+        if (w === TOMATO){
+          var lowThrow = new Howl({
+            src: [sounds[0]],
+            loop: false,
+            volume: volume
+          })
+          var mediumThrow = new Howl({
+            src: [sounds[1]],
+            loop: false,
+            volume: volume
+          })
+          var highThrow = new Howl({
+            src: [sounds[2]],
+            loop: false,
+            volume: volume
+          })
+          
+          //hive mind code
+          //60% chance normal, 20% high, 20% low
+          var r = Math.random()
+          if (r < 0.20) {
+            lowThrow.play();
+          } else if (r < 0.40) {
+            mediumThrow.play();
+          } else {
+            highThrow.play();
+          }
+        }else if (w === SPOON){
+          var swingSound = new Howl({
+            src: [sounds[5]],
+            loop: false,
+            volume: volume
+          })
+          swingSound.play();
         }
       }
 
@@ -380,6 +398,25 @@ function doCollisionMovePlayers() {
           }
         }
         if (!isReflected) {
+          
+          //
+          if (projectiles[i] instanceof SpoonProjectile){
+            var smackSound = new Howl({
+              src: [sounds[3]],
+              loop: false,
+              volume: 0.5
+            });
+            smackSound.play();
+          }
+          if (projectiles[i] instanceof Projectile){
+            var splatSound = new Howl({
+              src: [sounds[4]],
+              loop: false,
+              volume: 0.5
+            });
+            splatSound.play();
+          }
+          
           players[j].damage(PROJECTILE_DAMAGE, findPlayer(projectiles[i].owner))
           projectiles.splice(i, 1);
           i--;
@@ -407,7 +444,6 @@ function doCollisionMovePlayers() {
   for (var i = 0; i < projectiles.length; i++) {
     for (var j = 0; j < walls.length; j++) {
       if (projectiles[i].getWallFloorCollider().isColliding(walls[j].getCollider())) {
-
 
         if (projectiles[j] instanceof Projectile) {
           projectiles[i].dead = true
@@ -488,7 +524,7 @@ function draw() {
   } else if (menuState === LOBBY) {
     drawLobby();
   } else if (menuState === GAME) {
-    document.getElementById("canvasUI").style.display = "block";
+    document.getElementById("canvasUI").style.visibility = "visible";
     drawGame();
   } else if (menuState === MAIN_MENU) {
     drawMainMenu();
@@ -502,6 +538,7 @@ function draw() {
 function setupGame() {
   mainMenuHtml.style.display = "none";
   document.getElementById("sketch-container").style.display = "block";
+  document.getElementById("canvasUI").style.visibility = "visible";
   if(cnv == null){
     cnv = createCanvas(20, 20, WEBGL);
     cnv.parent("sketch-container");
@@ -516,7 +553,7 @@ function setupGame() {
   normalMaterial();
   let eyeZ = height / 2 / tan(PI / 6);
   //perspective(PI/3, width/height, eyeZ/10 - 20, eyeZ*10);
-  //perspective()
+  perspective()
 }
 
 let lastID
@@ -533,6 +570,8 @@ function sendDiagnostic() {
 
 function drawGame() {
   mainMenuHtml.style.display = "none";
+  //ambientLight(255, 0, 0);
+  
   //windowResized()
 
   background(51,221,255)
@@ -586,15 +625,18 @@ function drawGame() {
     droppedBatteries[i].render()
   }
 
+  /* Jeremy
   push();
     translate(0, 0, 0);
     fill(0);
     stroke(255);
     box(40);
   pop();
+  */
 
   push()
-    fill(155, 50, 0, 100)
+    fill(155, 50, 0, 255);
+    texture(FLOOR_PNG);
     rotateX(PI/2)
     translate(0, GROUND, 0)
     plane(3000, 3000)
@@ -863,6 +905,7 @@ function setupGameOver() {
   Win_div.style.display = "block";
   mainMenuHtml.style.display = "none";
   document.getElementById("sketch-container").style.display = "none";
+  document.getElementById("canvasUI").style.visibility = "hidden";
   mainMenuHtml.style.display = "none";
   if (menuState === YOU_WIN) {
     if(WinScreenCounter === 0){

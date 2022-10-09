@@ -78,7 +78,9 @@ class Player {
         rotateX(3.5);
         rotateZ(0)
         scale(0.25);
-        fill(255)
+        fill(255);
+        stroke(250);
+        strokeWeight(0.5);
         model(PLATE_OBJ);
       pop();
     }
