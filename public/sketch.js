@@ -516,7 +516,7 @@ function draw() {
   } else if (menuState === LOBBY) {
     drawLobby();
   } else if (menuState === GAME) {
-    document.getElementById("canvasUI").style.display = "block";
+    document.getElementById("canvasUI").style.visibility = "visible";
     drawGame();
   } else if (menuState === MAIN_MENU) {
     drawMainMenu();
@@ -530,6 +530,7 @@ function draw() {
 function setupGame() {
   mainMenuHtml.style.display = "none";
   document.getElementById("sketch-container").style.display = "block";
+  document.getElementById("canvasUI").style.visibility = "visible";
   if(cnv == null){
     cnv = createCanvas(20, 20, WEBGL);
     cnv.parent("sketch-container");
@@ -544,7 +545,7 @@ function setupGame() {
   normalMaterial();
   let eyeZ = height / 2 / tan(PI / 6);
   //perspective(PI/3, width/height, eyeZ/10 - 20, eyeZ*10);
-  //perspective()
+  perspective()
 }
 
 let lastID
@@ -891,6 +892,7 @@ function setupGameOver() {
   Win_div.style.display = "block";
   mainMenuHtml.style.display = "none";
   document.getElementById("sketch-container").style.display = "none";
+  document.getElementById("canvasUI").style.visibility = "hidden";
   mainMenuHtml.style.display = "none";
   if (menuState === YOU_WIN) {
     if(WinScreenCounter === 0){
