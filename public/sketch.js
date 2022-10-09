@@ -16,7 +16,7 @@ TODO:
 */
 
 //Interact = Clicking UI, Smack = Spoon collision, Splat = Tomato collision, Swish = Spoon failed collision
-var sounds = ['sounds/interact.mp3', 'sounds/low_throw.mp3', 'sounds/medium_throw.mp3', 'sounds/high_throw.mp3', 'sounds/smack.mp3', 'sounds/splat.mp3', 
+var sounds = ['sounds/low_throw.mp3', 'sounds/medium_throw.mp3', 'sounds/high_throw.mp3', 'sounds/smack.mp3', 'sounds/splat.mp3', 
 'sounds/swish.mp3'];
 
 /*
@@ -210,38 +210,50 @@ function setup() {
         let me = findPlayer(socket.id)
         let volume
         
+        var w;
         for (let j = 0; j < players.length; j++) {
           if (players[j].id === data.events[i].id) {
             projectiles.push(players[j].getShootProjectile());
-            volume = calculateVolume(players[j].pos.dist(me.pos))
+            volume = calculateVolume(players[j].pos.dist(me.pos));
+            w = players[j].weapon;
           }
         }
 
-        var lowThrow = new Howl({
-          src: [sounds[1]],
-          loop: false,
-          volume: volume
-        })
-        var mediumThrow = new Howl({
-          src: [sounds[2]],
-          loop: false,
-          volume: volume
-        })
-        var highThrow = new Howl({
-          src: [sounds[3]],
-          loop: false,
-          volume: volume
-        })
-        
-        //hive mind code
-        //60% chance normal, 20% high, 20% low
-        var r = Math.random()
-        if (r < 0.20) {
-          lowThrow.play();
-        } else if (r < 0.40) {
-          mediumThrow.play();
-        } else {
-          highThrow.play();
+        //plays sound according to weapon
+        if (w === TOMATO){
+          var lowThrow = new Howl({
+            src: [sounds[0]],
+            loop: false,
+            volume: volume
+          })
+          var mediumThrow = new Howl({
+            src: [sounds[1]],
+            loop: false,
+            volume: volume
+          })
+          var highThrow = new Howl({
+            src: [sounds[2]],
+            loop: false,
+            volume: volume
+          })
+          
+          //hive mind code
+          //60% chance normal, 20% high, 20% low
+          var r = Math.random()
+          if (r < 0.20) {
+            lowThrow.play();
+          } else if (r < 0.40) {
+            mediumThrow.play();
+          } else {
+            highThrow.play();
+          }
+        }else if (w === SPOON){
+          var swingSound = new Howl({
+            src: [sounds[5]],
+            loop: false,
+            volume: volume
+          })
+          swingSound.play();
         }
       }
 
@@ -379,6 +391,24 @@ function doCollisionMovePlayers() {
           }
         }
         if (!isReflected) {
+          
+          if (projectiles[i] instanceof SpoonProjectile){
+            var smackSound = new Howl({
+              src: [sounds[3]],
+              loop: false,
+              volume: 0.5
+            });
+            smackSound.play();
+          }
+          if (projectiles[i] instanceof Projectile){
+            var splatSound = new Howl({
+              src: [sounds[4]],
+              loop: false,
+              volume: 0.5
+            });
+            splatSound.play();
+          }
+          
           players[j].damage(PROJECTILE_DAMAGE, findPlayer(projectiles[i].owner))
           projectiles.splice(i, 1);
           i--;
@@ -406,7 +436,6 @@ function doCollisionMovePlayers() {
   for (var i = 0; i < projectiles.length; i++) {
     for (var j = 0; j < walls.length; j++) {
       if (projectiles[i].getWallFloorCollider().isColliding(walls[j].getCollider())) {
-
 
         if (projectiles[j] instanceof Projectile) {
           projectiles[i].dead = true
