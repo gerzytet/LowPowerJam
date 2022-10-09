@@ -96,12 +96,19 @@ class Player {
         } else {
           fill(0, 0, 255);
         }
-        translate(this.pos.copy().sub(0, 40, 0))
+        translate(this.pos.copy().sub(0, 70, 0))
         textSize(24)
         rotateY(-cameraAngle - PI / 2)
         textFont(MC_FONT)
         textAlign(CENTER)
-        text(this.name, 0, 0, 0)
+        text(this.name, 0, 0)
+      pop()
+
+      push()
+        fill(255, 0, 0)
+        translate(this.pos.copy().sub(0, 50, 0))
+        rotateY(-cameraAngle)
+        box(10, 10, lerp(0, 100, this.health / PLAYER_MAX_HEALTH))
       pop()
     }
 
@@ -382,6 +389,7 @@ class Player {
   respawn() {
     this.health = PLAYER_MAX_HEALTH
     this.ammo = MAX_AMMO
+    this.pos = spawnPoints[this.team].copy()
   }
 
   changeWeapon(weapon) {
