@@ -32,14 +32,19 @@ function updateUI(id){
     
     
     if(player != undefined){
-        Tomato_Block.innerHTML = '<p id="W1">1</p><img id="tImg" src="images/Tomato.png"></img><p id="ammoCounter">'+player.ammo+'</p>';
+        Tomato_Block.innerHTML = '<p id="W1">1</p><img id="tImg" src="images/Tomato.png"></img><p id="ammoCounter">'+ceil(player.ammo)+'</p>';
         if(player.weapon == TOMATO){
-            Tomato_Block.opasity = 1;
-            Plate_Block.opasity = .5;
+            Tomato_Block.style.opacity = 1;
+            Plate_Block.style.opacity = .5;
+            Spoon_Block.style.opacity = .5;
         }else if(player.weapon == PLATE){
-    
+            Tomato_Block.style.opacity = .5;
+            Plate_Block.style.opacity = 1;
+            Spoon_Block.style.opacity = .5;
         }else {
-    
+            Tomato_Block.style.opacity = .5;
+            Plate_Block.style.opacity = .5;
+            Spoon_Block.style.opacity = 1;
         }
         
         if(player.shootTimer <= 0){
