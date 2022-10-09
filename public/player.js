@@ -109,6 +109,18 @@ class Player {
         translate(this.pos.copy().sub(0, 50, 0))
         rotateY(-cameraAngle)
         box(10, 10, lerp(0, 100, this.health / PLAYER_MAX_HEALTH))
+        
+        if(findPlayer(socket.id).get2dLooking().heading() <= 0){
+          translate(findPlayer(socket.id).looking.x, -12, findPlayer(socket.id).looking.z);
+        }
+        else{
+          translate(-1*findPlayer(socket.id).looking.x, -12, -1*findPlayer(socket.id).looking.z);
+        }
+        
+        fill(51,221,255);
+        stroke(0);
+        plane(22*this.name.length, 26);
+        
       pop()
     }
 
