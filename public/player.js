@@ -67,17 +67,7 @@ class Player {
       noStroke();
       //box(PLAYER_SIZE);
       scale(0.38);
-      model(CHARECTER_OBJ);
-    pop();
-
-    push();
-      translate(
-       this.pos.x + this.looking.x * 10,
-        this.pos.y - 30,
-        this.pos.z + this.looking.z * 10
-      );
-      fill(0);
-      sphere(3);
+      model(PLAYER_OBJ);
     pop();
 
     if (this.weapon === PLATE) {
