@@ -50,8 +50,8 @@ const YOU_LOSE = 5
 let menuState = MAIN_MENU
 let myLobbyIndex = -1
 const renderColliders = false
-const CTF_TIME_LIMIT = 10 * 30
-const CTF_WIN_POINTS = 200
+const CTF_TIME_LIMIT = 90 * 30
+const CTF_WIN_POINTS = 30 * 30
 
 /******GAMESTATE ZONE*****/
 let players = []
@@ -608,11 +608,7 @@ function doLobbyInput() {
   if (keyIsDown("H".charCodeAt()) && socket.id === lobbies[myLobbyIndex].players[0] && !hPressed) {
     socket.emit("startGame", {
       lobby: myLobbyIndex,
-<<<<<<< HEAD
       map: mapSelection
-=======
-      map: 1
->>>>>>> 782deb2b8a2384d22127a2f09122bb9193158aa9
     })
     hPressed = true
   } else {
@@ -654,6 +650,9 @@ function doLobbyInput() {
 
 let mapSelection
 function drawLobby() {
+  if (mapSelection === undefined) {
+    mapSelection = 0
+  }
   background(100);
   push();
   fill(0);
