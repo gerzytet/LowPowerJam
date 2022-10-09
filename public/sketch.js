@@ -439,8 +439,8 @@ function doCollisionMovePlayers() {
         function tryvec(v) {
           player.pos.add(v)
           if (player.getWallCollider().isColliding(walls[j].getCollider())) {
-            return false
             player.pos.sub(v)
+            return false
           }
           return true
         }
