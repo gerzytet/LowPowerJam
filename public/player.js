@@ -283,7 +283,7 @@ class Player {
   }
 
   canShoot() {
-    return this.ammo > 0 && this.shootTimer <= 0 && this.weapon !== PLATE;
+    return (this.weapon !== TOMATO || this.ammo > 0) && this.shootTimer <= 0 && this.weapon !== PLATE;
   }
 
   die(killer) {
