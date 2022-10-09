@@ -32,11 +32,11 @@ class SphereCollider {
 
 class WallCollider {
     //p1 and p2 are 2 2d points that define the wall orientation
-    constructor(p1, p2) {
+    constructor(p1, p2, height) {
         this.p1 = p1
         this.p2 = p2
         //this.y = y
-        //this.height = height
+        this.height = height
 
         //wall collision doesn't work properly with walls perfectly aligned with the x or z axis
         //workaround:
@@ -52,6 +52,10 @@ class WallCollider {
         if (other instanceof WallCollider) {
             throw new Error("Not implemented")
         } else if (other instanceof SphereCollider) {
+            if (other.pos.y < -this.height) {
+                return false
+            }
+
             let p1 = this.p1
             let p2 = this.p2
             let testPoint = other.pos

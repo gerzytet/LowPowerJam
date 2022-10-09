@@ -28,10 +28,10 @@ function initMaps() {
             new Wall(cv2(600, -100), cv2(600, 600)),
             new Wall(cv2(-100, 600), cv2(600, 600)),
 
-            new HealthKitchen(cv(0, 0), new BatterySlot(cv(100, 100), false)),
-            new HealthKitchen(cv(500, 500), new BatterySlot(cv(400, 400), false)),
-            new TomatoKitchen(cv(500, 0), new BatterySlot(cv(400, 100), true)),
-            new TomatoKitchen(cv(0, 500), new BatterySlot(cv(100, 400), true)),
+            new HealthKitchen(cv(0, 0), new BatterySlot(cv(100, 100), false), 0),
+            new HealthKitchen(cv(500, 500), new BatterySlot(cv(400, 400), false), 0),
+            new TomatoKitchen(cv(500, 0), new BatterySlot(cv(400, 100), true), 1),
+            new TomatoKitchen(cv(0, 500), new BatterySlot(cv(100, 400), true), 1),
 
             new Wall(cv2(250, 50), cv2(250, 450)),
             new Wall(cv2(50, 250), cv2(450, 250))

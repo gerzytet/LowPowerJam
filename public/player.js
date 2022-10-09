@@ -26,7 +26,7 @@ const twoKey = 50;
 const threeKey = 51;
 
 class Player {
-  constructor(id, x, y, z) {
+  constructor(id, x, y, z, team) {
     this.id = id;
     this.name = "player" + players.length;
     this.kills = 0;
@@ -54,6 +54,7 @@ class Player {
     this.deaths = 0
 
     this.speed = PLAYER_SPEED
+    this.team = team
   }
 
   render() {
@@ -63,20 +64,34 @@ class Player {
       rotateZ(PI);
       fill(255 * (this.health / PLAYER_MAX_HEALTH), 0, 255 * (this.health / PLAYER_MAX_HEALTH));
       stroke(255);
-      //box(PLAYER_SIZE);
       scale(0.38);
       model(CHARECTER_OBJ);
     pop();
 
     push();
-    translate(
-      this.pos.x + this.looking.x * 10,
-      this.pos.y - 30,
-      this.pos.z + this.looking.z * 10
-    );
-    fill(0);
-    sphere(3);
+      translate(
+       this.pos.x + this.looking.x * 10,
+        this.pos.y - 30,
+        this.pos.z + this.looking.z * 10
+      );
+      fill(0);
+      sphere(3);
     pop();
+
+    if (this.weapon === PLATE) {
+      push();
+        translate(createVector(this.pos.x, this.pos.y - 30, this.pos.z).add(this.looking.copy().mult(20)));
+        rotateY(-1 * this.get2dLooking().heading() + 3*PI / 2 - 0.1);
+        rotateX(3.5);
+        rotateZ(0)
+        scale(0.25);
+        model(PLATE_OBJ);
+      pop();
+    }
+  }
+
+  getWallCollider() {
+    return new SphereCollider(this.pos.copy(), PLAYER_SIZE * 0.8)
   }
 
   tiltCamera(angle) {
@@ -233,7 +248,7 @@ class Player {
       return new SpoonProjectile(this.id)
     }
     return new Projectile(
-      this.pos.copy(),
+      this.pos.copy().add(0, -25, 0).add(this.looking.copy().mult(20)),
       this.looking.copy().mult(PROJECTILE_SPEED),
       this.id
     )

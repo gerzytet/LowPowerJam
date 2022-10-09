@@ -11,6 +11,8 @@ var Lobby = require("./lobby.js")
 const LOBBY_OPEN = Lobby.LOBBY_OPEN
 const LOBBY_STARTED = Lobby.LOBBY_STARTED
 Lobby = Lobby.Lobby
+var lastGameState
+var lastGameStateID = 0
 
 var app = express();
 var server = app.listen(3000);
@@ -18,7 +20,7 @@ const numLobies = 6
 var lobbies = []
 var events = []
 for (var i = 0; i < numLobies; i++) {
-  lobbies.push(new Lobby([], LOBBY_OPEN))
+  lobbies.push(new Lobby([], LOBBY_OPEN, {}))
   events.push([])
 }
 
@@ -78,6 +80,9 @@ function newConnection(socket) {
   socket.on('pickupBattery', pickupBattery)
   socket.on('changeWeapon', changeWeapon);
   socket.on('quitLobby', quitLobby);
+  socket.on('checkConsistency', checkConsistency)
+  socket.on('changeGameMode', changeGameMode)
+  socket.on('switchTeam', switchTeam)
 
   socket.on("disconnect", Disconnect);
   
@@ -140,6 +145,7 @@ function newConnection(socket) {
     var player = socket.id
     var lobby = data.lobby
     lobbies[lobby].players.push(player)
+    lobbies[lobby].teams[player] = Math.floor(Math.random() * 2)
   }
 
   function startGame(data) {
@@ -150,7 +156,11 @@ function newConnection(socket) {
       let s = io.sockets.sockets.get(players[i])
       s.leave("lobby")
       s.join("game" + lobbyIndex)
-      events[lobbyIndex].push({type: "PlayerJoin", id: players[i]})
+      events[lobbyIndex].push({
+        type: "PlayerJoin",
+        id: players[i],
+        team: lobbies[lobbyIndex].teams[players[i]]
+      })
     }
     io.to("game" + lobbyIndex).emit("startGame", {
       map: data.map
@@ -176,5 +186,66 @@ function newConnection(socket) {
     var lobbyIndex = getLobbyIndex(player)
     if (lobbyIndex === -1) return
     removePlayerFromLobbies(player)
+  }
+
+  function checkConsistency(data) {
+    var player = socket.id
+    var lobbyIndex = getLobbyIndex(player)
+    if (lobbyIndex === -1) return
+    if (lobbyIndex !== 0) return
+    if (data.gameStateID > lastGameStateID) {
+      lastGameStateID = data.gameStateID
+      lastGameState = data.gameState
+      return
+    } else if (data.gameStateID !== lastGameStateID) {
+      lastGameStateID = data.gameStateID
+      return
+    }
+    if (lastGameState !== undefined) {
+      isConsistent(data.gameState, lastGameState)
+    }
+  }
+
+  function changeGameMode(data) {
+    var player = socket.id
+    var lobbyIndex = getLobbyIndex(player)
+    lobbies[lobbyIndex].gameMode = data.gameMode
+  }
+
+  function switchTeam(data) {
+    let player = socket.id
+    let lobbyIndex = getLobbyIndex(player)
+    if (lobbyIndex === -1) return
+    lobbies[lobbyIndex].teams[player] = 1-lobbies[lobbyIndex].teams[player] 
+  }
+}
+
+function isConsistent(g1, g2) {
+  //console.log("checking consistency...")
+
+  var p1 = g1.players
+  var p2 = g2.players
+  if (p1.length !== p2.length) {
+    console.log("!!!!! player length not equal")
+    console.log(p1.length + " " + p2.length)
+    return
+  }
+
+  for (let i = 0; i < p1.length; i++) {
+    if (p1[i].pos.x !== p2[i].pos.x) {
+      console.log("!!!!! player x not equal")
+      console.log(p1[i].pos.x + " " + p2[i].pos.x)
+      return
+    }
+    if (p1[i].pos.y !== p2[i].pos.y) {
+      console.log("!!!!! player y not equal")
+      console.log(p1[i].pos.y + " " + p2[i].pos.y)
+      return
+    }
+    if (p1[i].pos.z !== p2[i].pos.z) {
+      console.log("!!!!! player z not equal")
+      console.log(p1[i].pos.z + " " + p2[i].pos.z)
+      return
+    }
   }
 }

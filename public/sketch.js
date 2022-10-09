@@ -28,12 +28,12 @@ var testSound = new Howl({
 //4 levels, multiplied 1-4 depending on distance
 let soundMultiplier = 100;
 
-let cnv;
-let cam;
+let cnv
+let cam
 
-let last_vx;
-let last_vy;
-let last_vz;
+let last_vx
+let last_vy
+let last_vz
 
 let mouseMovementX = 0
 let mouseMovementY = 0
@@ -43,6 +43,8 @@ const LOBBY_SELECT = 0
 const LOBBY = 1
 const GAME = 2
 const MAIN_MENU = 3
+const YOU_WIN = 4
+const YOU_LOSE = 5
 let menuState = MAIN_MENU
 let myLobbyIndex = -1
 const renderColliders = false
@@ -62,6 +64,8 @@ let spawnPoint
 let lobbies
 let pointerLock
 let playersLastLength = 1;
+
+let gameMode
 
 function windowResized() {
   cnv = resizeCanvas(windowWidth - 40, windowHeight - 80);
@@ -132,18 +136,22 @@ let TOMATO_OBJ
 let TOMATO_PNG
 let SPOON_OBJ
 let CHARECTER_OBJ
+let PLATE_OBJ
 function preload(){
   TOMATO_OBJ = loadModel('models/Tomato.obj', true);
   TOMATO_PNG = loadImage('images/tomato_mat.png', true);
   SPOON_OBJ = loadModel('models/spoon.obj', true);
+  PLATE_OBJ = loadModel('models/Plate.obj', true);
   CHARECTER_OBJ = loadModel('models/Player.obj', true);
 }
 
 function setup() {
+  lastID = 0
   socket = io.connect()
   lobbies = []
   pointerLock = false
   initMaps()
+  gameMode = MODE_FFA
 
   socket.on("tick", function (data) {
     for (let i = 0; i < data.events.length; i++) {
@@ -265,14 +273,15 @@ function setup() {
       }
     }
     updateGamestate();
-  });
+    sendDiagnostic()
+  })
 
   socket.on("lobbyStatus", function (data) {
     lobbies = [];
     for (var i = 0; i < data.lobbies.length; i++) {
-      lobbies.push(new Lobby(data.lobbies[i].players, data.lobbies[i].status));
+      lobbies.push(new Lobby(data.lobbies[i].players, data.lobbies[i].status, data.lobbies[i].teams, data.lobbies[i].gameMode));
     }
-  });
+  })
 
   socket.on('startGame', function (data) {
     menuState = GAME
@@ -331,6 +340,17 @@ function updateGamestate() {
   }
 
   doCollisionMovePlayers()
+
+  let winner = getWinner()
+  if (winner !== null) {
+    if (winner.id === socket.id) {
+      menuState = YOU_WIN
+      setupGameOver()
+    } else {
+      menuState = YOU_LOSE
+      setupGameOver()
+    }
+  }
 }
 
 function doCollisionMovePlayers() {
@@ -347,7 +367,7 @@ function doCollisionMovePlayers() {
           let incomingAngle = players[j].get2dLooking().angleBetween(
             createVector(-projectiles[i].vel.x, -projectiles[i].vel.z)
           )
-          if (abs(incomingAngle) < PI / 2) {
+          if (abs(incomingAngle) < PI / 4) {
             let reflected = players[j].getShootProjectile()
             projectiles[i].vel = reflected.vel
             projectiles[i].pos = reflected.pos
@@ -413,18 +433,18 @@ function doCollisionMovePlayers() {
     player.move()
 
     for (let j = 0; j < walls.length; j++) {
-      if (player.getCollider().isColliding(walls[j].getCollider())) {
+      if (player.getWallCollider().isColliding(walls[j].getCollider())) {
         let movementVector = player.pos.copy().sub(oldPos)
         player.pos = oldPos.copy()
         movementVector = walls[j].getCollider().moveAgainst(movementVector)
         player.pos.add(movementVector)
       }
 
-      if (player.getCollider().isColliding(walls[j].getCollider())) {
+      if (player.getWallCollider().isColliding(walls[j].getCollider())) {
         //we are stuck in a wall, get unstuck
         function tryvec(v) {
           player.pos.add(v)
-          if (player.getCollider().isColliding(walls[j].getCollider())) {
+          if (player.getWallCollider().isColliding(walls[j].getCollider())) {
             return false
             player.pos.sub(v)
           }
@@ -459,15 +479,17 @@ function doCollisionMovePlayers() {
 }
 
 function draw() {
-  if (menuState == LOBBY_SELECT) {
+  if (menuState === LOBBY_SELECT) {
     drawLobbySelect();
-  } else if (menuState == LOBBY) {
+  } else if (menuState === LOBBY) {
     drawLobby();
-  } else if (menuState == GAME) {
+  } else if (menuState === GAME) {
     document.getElementById("canvasUI").style.visibility = "visible";
     drawGame();
-  } else if (menuState == MAIN_MENU) {
+  } else if (menuState === MAIN_MENU) {
     drawMainMenu();
+  } else if (menuState === YOU_WIN || menuState === YOU_LOSE) {
+    drawGameOver();
   } else {
     throw new Error("Invalid menu state");
   }
@@ -483,6 +505,18 @@ function setupGame() {
   let eyeZ = height / 2 / tan(PI / 6);
   //perspective(PI/3, width/height, eyeZ/10 - 20, eyeZ*10);
   perspective()
+}
+
+let lastID
+function sendDiagnostic() {
+  socket.emit('checkConsistency', {
+    gameStateID: lastID,
+    gameState: {
+      players: players,
+      projectiles: projectiles,
+    }
+  })
+  lastID++
 }
 
 function drawGame() {
@@ -553,7 +587,16 @@ function drawGame() {
   updateUI(socket.id);
 }
 
+//I'm mPressed!
+let mPressed
+let tPressed
 function doLobbyInput() {
+  if (mPressed === undefined) {
+    mPressed = false
+  }
+  if (tPressed === undefined) {
+    tPressed = false
+  }
   if (keyIsDown("H".charCodeAt()) && socket.id === lobbies[myLobbyIndex].players[0]) {
     socket.emit("startGame", {
       lobby: myLobbyIndex,
@@ -563,6 +606,23 @@ function doLobbyInput() {
     socket.emit('quitLobby', {})
     setupLobbySelect()
     menuState = LOBBY_SELECT
+  }
+  if (keyIsDown("M".charCodeAt()) && !mPressed) {
+    console.log('changing mode')
+    socket.emit('changeGameMode', {
+      gameMode: 1-lobbies[myLobbyIndex].gameMode
+    })
+    mPressed = true
+  } else {
+    if (!keyIsDown("M".charCodeAt())) mPressed = false
+  }
+
+  if (keyIsDown("T".charCodeAt()) && !tPressed) {
+    console.log('switching team')
+    socket.emit('switchTeam', {})
+    tPressed = true
+  } else {
+    if (!keyIsDown("T".charCodeAt())) tPressed = false
   }
 }
 
@@ -578,8 +638,18 @@ function drawLobby() {
   text("Players: ", x, y);
   y += 32;
   for (let i = 0; i < lobbies[myLobbyIndex].players.length; i++) {
-    text(lobbies[myLobbyIndex].players[i], x, y);
-    y += 32;
+    push()
+      let id = lobbies[myLobbyIndex].players[i]
+      if (lobbies[myLobbyIndex].gameMode === MODE_CTF) {
+        if (lobbies[myLobbyIndex].teams[id] == 0) {
+          fill(255, 0, 0)
+        } else {
+          fill(0, 0, 255)
+        }
+      }
+      text(id, x, y);
+      y += 32;
+    pop()
   }
   y += 32;
   if (socket.id === lobbies[myLobbyIndex].players[0]) {
@@ -590,6 +660,22 @@ function drawLobby() {
   }
   text("Press Q to quit lobby", x, y);
   y += 32;
+
+  text("Current gamemode: " + (
+    lobbies[myLobbyIndex].gameMode === MODE_FFA ? "Free for all" : "Capture the flag"
+  ), x, y);
+  y += 32;
+
+  text("Press M to change gamemode", x, y)
+  y += 32
+
+  text("You are " + socket.id, x, y)
+  y += 32
+
+  if (lobbies[myLobbyIndex].gameMode === MODE_CTF) {
+    text("Press T to change team", x, y)
+    y += 32
+  }
   pop();
 
   doLobbyInput();
@@ -668,4 +754,38 @@ function drawMainMenu() {
   pop();
 
   doMainMenuInput();
+}
+
+function getWinner() {
+  if (players.length === 0) {
+    return null;
+  }
+  if (players.length === 1) {
+    return players[0];
+  }
+  
+  for (let i = 0; i < players.length; i++) {
+    if (players[i].kills >= 1) {
+      return players[i]
+    }
+  }
+
+  return null
+}
+
+function setupGameOver() {
+  noCanvas()
+  cnv = createCanvas(20, 20);
+  cnv.parent("sketch-container");
+  windowResized();
+}
+
+function drawGameOver() {
+  push();
+    if (menuState === YOU_WIN) {
+      background(200);
+    } else {
+      background(100);
+    }
+  pop();
 }

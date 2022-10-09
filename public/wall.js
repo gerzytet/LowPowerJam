@@ -7,15 +7,15 @@
 
 class Wall {
     //p1 and p2 are 2 2d points that define the wall orientation
-    constructor(p1, p2) {
+    constructor(p1, p2, height = 50) {
         this.p1 = p1
         this.p2 = p2
         //this.y = y
-        //this.height = height
+        this.height = height
     }
 
     render() {
-        let height = 50
+        let height = this.height
         let width = this.p1.dist(this.p2)
 
         let mid = p5.Vector.lerp(this.p1, this.p2, 0.5)
@@ -32,6 +32,6 @@ class Wall {
     }
 
     getCollider() {
-        return new WallCollider(this.p1, this.p2)
+        return new WallCollider(this.p1, this.p2, this.height)
     }
 }
