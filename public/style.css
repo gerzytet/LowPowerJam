@@ -20,7 +20,7 @@ body {
 
   #tomato_wait{    
     position: fixed;
-    top: 9%;
+    top: 13%;
     left: 6%;
     width: 70px;
     height: 20px;
@@ -32,7 +32,7 @@ body {
   }
   #Health_Bar{    
     position: fixed;
-    top: 4%;
+    top: 8%;
     left: 6%;
     width: 80px;
     height: 40px;
@@ -105,8 +105,8 @@ body {
   /*Weapon UI*/
   #Tomato_Block{
     position: fixed;
-    top: 45%;
-    left: 94.3%;
+    top: 42%;
+    left: 94.3%; 
     padding: 10px;
     border: 2px solid black;
     background-color: gray;
