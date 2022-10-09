@@ -6,7 +6,7 @@
 */
 
 const BATTERY_SLOT_SIZE = 10
-const BATTERY_SLOT_RADIUS = 20
+const BATTERY_SLOT_RADIUS = 50
 
 class BatterySlot {
     constructor(pos, hasBattery) {
