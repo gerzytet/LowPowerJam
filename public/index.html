@@ -14,7 +14,7 @@
       type="text/javascript"
       src="https://cdn.jsdelivr.net/npm/p5@1.4.1/lib/p5.min.js"
     ></script>
-
+    <link href="https://fonts.googleapis.com/css2?family=Gemunu+Libre:wght@200&display=swap" rel="stylesheet">
     <!--<div id="sketch-container"></div>-->
 
      <!--Audio Stuff-->
@@ -47,9 +47,10 @@
     <script type="text/javascript" src="ui.js"></script>
     <script type="text/javascript" src="sketch.js"></script>
 
-    <div id="Main_Menu_Div" style="visibility: hidden;">
-      <input type="text" id="name_input">
-      <button type="button" id="start_button" onclick="playButtonFunc()">Play.</button>
+    <div  class="center" id="Main_Menu_Div" style="visibility: hidden;">
+      <label for="name_input"> Enter your name</label>
+      <input name="name_input" type="text" id="name_input">
+      <button type="button" id="start_button" onclick="playButtonFunc()">Play</button>
     </div>
     
     <div id="sketch-container">
