@@ -71,6 +71,7 @@ let playersLastLength = 1;
 
 let gameMode
 let teamPoints
+let ctfTimer = CTF_TIME_LIMIT
 
 function windowResized() {
   cnv = resizeCanvas(windowWidth - 40, windowHeight - 80);
@@ -361,6 +362,8 @@ function updateGamestate() {
         teamPoints[kitchens[i].team]++
       }
     }
+
+    ctfTimer--
   }
 
   console.log(teamPoints)
@@ -813,6 +816,14 @@ function getWinner() {
       return 0
     } else if (teamPoints[1] > teamPoints[0] && teamPoints[1] >= CTF_WIN_POINTS) {
       return 1
+    }
+
+    if (ctfTimer <= 0) {
+      if (teamPoints[0] > teamPoints[1]) {
+        return 0
+      } else {
+        return 1
+      }
     }
     
     return null
