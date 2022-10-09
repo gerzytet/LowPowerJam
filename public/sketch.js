@@ -166,45 +166,7 @@ function setup() {
       }
       if (data.events[i].type === "PlayerJoin") {
         let team = data.events[i].team
-        players.push(new Player(data.events[i].id, spawnPoints[team % 2].x, spawnPoints[team % 2].y, spawnPoints[team % 2].z, data.events[i].team));
-      }
-      if (
-        data.events[i].type === "CatchingUpNewPlayer" &&
-        players.length == 1
-      ) {
-        for (let j = 0; j < data.events[i].players.length; j++) {
-          let tempP = new Player(
-            data.events[i].players[j].id,
-            data.events[i].players[j].pos.x,
-            data.events[i].players[j].pos.y,
-            data.events[i].players[j].pos.z
-          );
-          tempP.vel = createVector(
-            data.events[i].players[j].vel.x,
-            data.events[i].players[j].vel.y,
-            data.events[i].players[j].vel.z
-          );
-          tempP.looking = createVector(
-            data.events[i].players[j].looking.x,
-            data.events[i].players[j].looking.y,
-            data.events[i].players[j].looking.z
-          );
-          players.push(tempP);
-        }
-        for (let j = 0; j < data.events[i].projectiles.length; j++) {
-          let dataProjectile = data.events[i].projectiles[j];
-          let pos = createVector(
-            dataProjectile.pos.x,
-            dataProjectile.pos.y,
-            dataProjectile.pos.z
-          );
-          let vel = createVector(
-            dataProjectile.vel.x,
-            dataProjectile.vel.y,
-            dataProjectile.vel.z
-          );
-          projectiles.push(new Projectile(pos, vel));
-        }
+        players.push(new Player(data.events[i].id, spawnPoints[team % 2].x, spawnPoints[team % 2].y, spawnPoints[team % 2].z, data.events[i].team, data.events[i].name));
       }
       if (data.events[i].type === "PlayerChangeVelocity") {
         for (let j = 0; j < players.length; j++) {

@@ -168,14 +168,16 @@ function newConnection(socket) {
         events[lobbyIndex].push({
           type: "PlayerJoin",
           id: players[i],
-          team: lobbies[lobbyIndex].teams[players[i]]
+          team: lobbies[lobbyIndex].teams[players[i]],
+          name: lobbies[lobbyIndex].names[players[i]]
         })
       } else {
         console.log("starting FFA")
         events[lobbyIndex].push({
           type: "PlayerJoin",
           id: players[i],
-          team: i
+          team: i,
+          name: lobbies[lobbyIndex].names[players[i]]
         })
       }
     }

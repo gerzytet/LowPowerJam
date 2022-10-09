@@ -26,9 +26,9 @@ const twoKey = 50;
 const threeKey = 51;
 
 class Player {
-  constructor(id, x, y, z, team) {
+  constructor(id, x, y, z, team, name) {
     this.id = id;
-    this.name = "player" + players.length;
+    this.name = name;
     this.kills = 0;
     this.pos = createVector(x, y, z);
     this.vel = createVector(0, 0, 0);
