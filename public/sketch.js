@@ -323,6 +323,9 @@ function loadMap(index) {
 function updateGamestate() {
   for (var i = 0; i < projectiles.length; i++) {
     projectiles[i].move()
+    if (projectiles[i] instanceof SpoonProjectile && projectiles[i].isDead()) {
+      projectiles.splice(i, 1)
+    }
   }
 
   doCollisionMovePlayers()

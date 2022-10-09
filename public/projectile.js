@@ -100,9 +100,10 @@ class SpoonProjectile {
 
   render() {
     push()
-      translate(this.pos.copy().add(this.getPlayer().looking.copy().mult(20)))
-      scale(SPOON_SIZE / 50)
+      translate(this.pos.copy().sub(this.getPlayer().looking.copy().mult(20)))
+      scale(SPOON_SIZE / 30)
       rotateZ(PI)
+      rotateZ(0.3)
       rotateY(this.getPlayer().get2dLooking().heading() + PI / 2)
       model(SPOON_OBJ)
     pop()
