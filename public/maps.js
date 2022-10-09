@@ -71,35 +71,39 @@ function initMaps() {
   //David's Map
   maps.push({
     playerSpawn: [
-      createVector(280, GROUND, 1300),
-      createVector(344, GROUND, -1200),
+      createVector(0, GROUND, 1000),
+      createVector(0, GROUND, -1000),
     ],
     name: "Feeding Forrest",
     objects: [
-      new Wall(cv2(50, 250), cv2(450, 250)),
+      new Wall(cv2(-1200, -1200), cv2(1200, -1200), WALL_HEIGHT),
+      new Wall(cv2(-1200, -1200), cv2(-1200, 1200), WALL_HEIGHT),
+      new Wall(cv2(1200, -1200), cv2(1200, 1200), WALL_HEIGHT),
+      new Wall(cv2(-1200, 1200), cv2(1200, 1200), WALL_HEIGHT),
 
-      new Wall(cv2(50, 250), cv2(450, 250)),
+      new Wall(cv2(-800, -700), cv2(-600, -900), WALL_HEIGHT),
+      new Wall(cv2(800, 900), cv2(1000, 700), WALL_HEIGHT),
+      new Wall(cv2(-800, 700), cv2(-600, 900), WALL_HEIGHT),
+      new Wall(cv2(800, -700), cv2(1000, -900), WALL_HEIGHT),
 
-      new Wall(cv2(50, 250), cv2(450, 250)),
-
-      new Wall(cv2(50, 250), cv2(450, 250)),
-
-      new HealthKitchen(
-        cv(-1300, -1300),
-        new BatterySlot(cv(-1300, -1100), false)
-      ),
-
-      new HealthKitchen(
-        cv(-1300, -1300),
-        new BatterySlot(cv(1300, 1100), false)
+      new TomatoKitchen(
+        cv(-800, -900),
+        new BatterySlot(cv(-600, -700), false), 1
       ),
 
       new TomatoKitchen(
-        cv(-1000, 1300),
-        new BatterySlot(cv(-1000, 1100), true)
+        cv(800, 900),
+        new BatterySlot(cv(1000, 700), false), 0
       ),
 
-      new TomatoKitchen(cv(1300, 1300), new BatterySlot(cv(1300, 1100), true)),
+      new TomatoKitchen(
+        cv(-800, 900),
+        new BatterySlot(cv(-600, 700), true), 0
+      ),
+
+      new TomatoKitchen(
+        cv(800, -900), 
+        new BatterySlot(cv(1000, -700), true), 1),
     ],
   });
 }

@@ -16,7 +16,7 @@ const PLAYER_GRAVITY = 0.4
 const BATTERY_TIMER = 80
 const RESPAWN_TIMER = 100
 const PLAYER_SPEED = 3
-const JUMP_STRENGTH = 12
+const JUMP_STRENGTH = 24
 
 const TOMATO = 1
 const PLATE = 2
