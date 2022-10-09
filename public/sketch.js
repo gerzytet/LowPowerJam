@@ -481,7 +481,7 @@ function draw() {
   } else if (menuState === LOBBY) {
     drawLobby();
   } else if (menuState === GAME) {
-    document.getElementById("canvasUI").style.visibility = "visible";
+    document.getElementById("canvasUI").style.display = "block";
     drawGame();
   } else if (menuState === MAIN_MENU) {
     drawMainMenu();
@@ -493,8 +493,12 @@ function draw() {
 }
 
 function setupGame() {
-  cnv = createCanvas(20, 20, WEBGL);
-  cnv.parent("sketch-container");
+  mainMenuHtml.style.display = "none";
+  document.getElementById("sketch-container").style.display = "block";
+  if(cnv == null){
+    cnv = createCanvas(20, 20, WEBGL);
+    cnv.parent("sketch-container");
+  }
   windowResized();
 
   document.addEventListener(
@@ -521,6 +525,7 @@ function sendDiagnostic() {
 }
 
 function drawGame() {
+  mainMenuHtml.style.display = "none";
   //windowResized()
 
   background(51,221,255)
@@ -653,6 +658,7 @@ function doLobbyInput() {
 
 let mapSelection
 function drawLobby() {
+  mainMenuHtml.style.display = "none";
   if (mapSelection === undefined) {
     mapSelection = 0
   }
@@ -723,7 +729,7 @@ function setupLobbySelect() {
   cnv = createCanvas(20, 20);
   cnv.parent("sketch-container");
   windowResized();
-  mainMenuHtml.style.visibility = "hidden";
+  mainMenuHtml.style.display = "none";
 }
 
 function joinLobby(n) {
@@ -748,6 +754,7 @@ function doLobbySelectInput() {
 }
 
 function drawLobbySelect() {
+  mainMenuHtml.style.display = "none";
   background(100);
   push();
   fill(0);
@@ -776,8 +783,10 @@ function drawLobbySelect() {
 
 let mainMenuHtml;
 function setupMainMenu() {
+  console.log('Clicked');
   mainMenuHtml = document.getElementById("Main_Menu_Div");
-  mainMenuHtml.style.visibility = "visible";
+  mainMenuHtml.style.display = "block";
+  if(Win_div != null){Win_div.style.display = "none";}
 }
 
 function doMainMenuInput() {
@@ -788,7 +797,7 @@ function doMainMenuInput() {
 }
 
 function drawMainMenu() {
-  //mainMenuHtml.style.visibility = "visible";
+  //mainMenuHtml.style.display = "block";
 }
 
 function getWinner() {
@@ -832,19 +841,36 @@ function getWinner() {
   }
 }
 
+let Win_div;
 function setupGameOver() {
-  noCanvas()
+  /*noCanvas()
   cnv = createCanvas(20, 20);
   cnv.parent("sketch-container");
-  windowResized();
+  windowResized();*/
+  console.log()
+  Win_div = document.getElementById("Win_Div");
+  Win_div.style.display = "block";
+  mainMenuHtml.style.display = "none";
+  document.getElementById("sketch-container").style.display = "none";
+  mainMenuHtml.style.display = "none";
+  if (menuState === YOU_WIN) {
+    if(WinScreenCounter === 0){
+      Win_div.style.height = "auto";
+      Win_div.style.backgroundColor = "gray";
+      Win_div.innerHTML = "<h1 style = 'color: gold;'>You Won</h1><button onClick='window.location.reload();'>Main Menu</button>";
+      WinScreenCounter++;
+    }
+    
+  } else {
+    if(WinScreenCounter === 0){
+      Win_div.style.height = "auto";
+      Win_div.style.backgroundColor = "black";
+      Win_div.innerHTML = "<h1 style = 'color: red;'>You lost</h1><button onClick='window.location.reload();'>Main Menu</button>";
+      WinScreenCounter++;
+    }
+  }
 }
 
 function drawGameOver() {
-  push();
-    if (menuState === YOU_WIN) {
-      background(200);
-    } else {
-      background(100);
-    }
-  pop();
+  
 }
