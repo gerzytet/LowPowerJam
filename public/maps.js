@@ -49,7 +49,7 @@ function initMaps() {
       createVector(100, GROUND, 100),
       createVector(400, GROUND, 400),
     ],
-    name: "Test Map",
+    name: "TINY Map",
     objects: [
       new Wall(cv2(-100, -100), cv2(600, -100), WALL_HEIGHT),
       new Wall(cv2(-100, -100), cv2(-100, 600), WALL_HEIGHT),

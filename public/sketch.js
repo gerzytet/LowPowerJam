@@ -740,14 +740,19 @@ function drawLobby() {
     pop()
   }
   y += 32;
+  text("You are " + lobbies[myLobbyIndex].names[socket.id], x, y)
+  y += 50
+
   if (socket.id === lobbies[myLobbyIndex].players[0]) {
+    fill(255);
     text("You are the host", x, y);
     y += 32;
+    fill(0);
     text("Press H to start the game", x, y);
     y += 32;
   }
   text("Press Q to quit lobby", x, y);
-  y += 32;
+  y += 50;
 
   text("Current gamemode: " + (
     lobbies[myLobbyIndex].gameMode === MODE_FFA ? "Free for all" : "Capture the flag"
@@ -759,9 +764,6 @@ function drawLobby() {
     y += 32
   }
 
-  text("You are " + socket.id, x, y)
-  y += 32
-
   if (lobbies[myLobbyIndex].gameMode === MODE_CTF) {
     text("Press T to change team", x, y)
     y += 32
@@ -770,8 +772,9 @@ function drawLobby() {
   if (socket.id === lobbies[myLobbyIndex].players[0]) {
     text("Current map: " + maps[mapSelection].name, x, y)
     y += 32
+    text("Press P to change map", x, y)
+    y += 32
   }
-
   pop();
 
   doLobbyInput();
