@@ -27,7 +27,7 @@ class Wall {
             let angle = p1.angleBetween(p2) 
             rotateY(-angle)
             fill(255, 255, 255, 100)
-            plane(width, height)
+            box(width, height, 10)
         pop()
     }
 
