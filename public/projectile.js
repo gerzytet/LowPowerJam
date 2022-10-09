@@ -109,6 +109,7 @@ class SpoonProjectile {
       rotateZ(PI)
       rotateZ(0.3)
       rotateY(this.getPlayer().get2dLooking().heading() + PI / 2)
+      fill(128)
       model(SPOON_OBJ)
     pop()
   }
@@ -122,7 +123,7 @@ class SpoonProjectile {
     if (this.isDead()) {
       return new NullCollider()
     } else {
-      return new SphereCollider(this.pos, SPOON_SIZE)
+      return new SphereCollider(this.pos.copy().add(this.getPlayer().looking.copy().mult(10)), SPOON_SIZE)
     }
   }
 

@@ -71,20 +71,6 @@ class Player {
       model(PLAYER_OBJ);
     pop();
 
-    push();
-    translate(this.pos.x, this.pos.y - 50, this.pos.z);
-    if(this.team == 0){
-      fill(255, 0, 0);
-    }
-    else if(this.team == 1){
-      fill(0, 0, 255);
-    }
-    else{
-      fill(this.team * 25);
-    }
-    sphere(5);
-    pop();
-
     if (this.weapon === PLATE) {
       push();
         translate(createVector(this.pos.x, this.pos.y - 30, this.pos.z).add(this.looking.copy().mult(20)));
@@ -92,8 +78,29 @@ class Player {
         rotateX(3.5);
         rotateZ(0)
         scale(0.25);
+        fill(255)
         model(PLATE_OBJ);
       pop();
+    }
+
+    if (this.id !== socket.id) {
+      let cameraAngle = findPlayer(socket.id).get2dLooking().heading()
+      push()
+        if (gameMode === MODE_FFA) {
+          fill(255);
+        }
+        else if(this.team == 0){
+          fill(255, 0, 0);
+        } else {
+          fill(0, 0, 255);
+        }
+        translate(this.pos.copy().sub(0, 40, 0))
+        textSize(24)
+        rotateY(-cameraAngle - PI / 2)
+        textFont(MC_FONT)
+        textAlign(CENTER)
+        text(this.name, 0, 0, 0)
+      pop()
     }
   }
 

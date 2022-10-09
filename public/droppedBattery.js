@@ -10,8 +10,9 @@ class DroppedBattery {
     render() {
         push()
             translate(this.pos)
-            fill(0, 255, 0)
-            scale(BATTERY_SLOT_SIZE)
+            rotateX(PI)
+            scale(BATTERY_SLOT_SIZE / 100)
+            model(DROPPED_BATTERY_OBJ)
         pop()
     }
 }

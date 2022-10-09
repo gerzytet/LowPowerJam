@@ -49,7 +49,7 @@ const YOU_WIN = 4
 const YOU_LOSE = 5
 let menuState = MAIN_MENU
 let myLobbyIndex = -1
-const renderColliders = true
+const renderColliders = false
 const CTF_TIME_LIMIT = 90 * 30
 const CTF_WIN_POINTS = 30 * 30
 const FFA_KILLS_TO_WIN = 5
@@ -142,15 +142,21 @@ let PLAYER_OBJ
 let PLAYER_PNG
 let PLATE_OBJ
 let DROPPED_BATTERY_OBJ
-function preload(){
-  TOMATO_OBJ = loadModel('models/Tomato2.obj', true);
-  TOMATO_PNG = loadImage('images/tomato_mat.png');
-  SPOON_OBJ = loadModel('models/spoon.obj', true);
-  PLATE_OBJ = loadModel('models/Plate.obj', true);
-  DROPPED_BATTERY_OBJ = loadModel('models/DroppedBattery.obj', true);
+let HEALTH_OBJ
 
-  PLAYER_OBJ = loadModel('models/Player.obj', true);
-  PLAYER_PNG = loadImage('images/player_mat.png');
+let MC_FONT
+function preload(){
+  TOMATO_OBJ = loadModel('models/Tomato2.obj', true)
+  TOMATO_PNG = loadImage('images/tomato_mat.png')
+  SPOON_OBJ = loadModel('models/spoon.obj', true)
+  PLATE_OBJ = loadModel('models/Plate.obj', true)
+  DROPPED_BATTERY_OBJ = loadModel('models/DroppedBattery.obj', true)
+  HEALTH_OBJ = loadModel('models/Health.obj', true)
+
+  PLAYER_OBJ = loadModel('models/Player.obj', true)
+  PLAYER_PNG = loadImage('images/player_mat.png')
+  
+  MC_FONT = loadFont('dogicapixel.otf')
 }
 
 function setup() {
@@ -559,6 +565,9 @@ function drawGame() {
   for (var i = 0; i < kitchens.length; i++) {
     if (renderColliders) {
       kitchens[i].getCollider().render();
+      if (kitchens[i].hasBatterySlot()) {
+        kitchens[i].batterySlot.getCollider().render();
+      }
     }
     kitchens[i].render();
   }

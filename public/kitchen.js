@@ -18,17 +18,17 @@ class Kitchen {
     render() {
         this.batterySlot.render()
         push();
-        translate(this.pos.x, this.pos.y - 50, this.pos.z);
-        if(this.team == 0){
-        fill(255, 0, 0);
-        }
-        else if(this.team == 1){
-        fill(0, 0, 255);
-        }
-        else{
-        fill(this.team * 25);
-        }
-        sphere(5);
+            translate(this.pos.x, this.pos.y - 50, this.pos.z);
+            if(this.team == 0){
+            fill(255, 0, 0);
+            }
+            else if(this.team == 1){
+            fill(0, 0, 255);
+            }
+            else{
+            fill(this.team * 25);
+            }
+            sphere(5);
         pop();
     }
 
@@ -54,12 +54,16 @@ class HealthKitchen extends Kitchen {
         push()
             super.render()
             translate(this.pos)
-            if (this.isOn()) {
-                fill(255, 120, 120)
+            rotateX(PI)
+            if (!this.isOn()) {
+                tint(128)
             } else {
-                fill(255 / 2, 120 / 2, 120 / 2)
+                translate(0, sin(frameCount / 20) * 10, 0)
+                rotateY(frameCount / 20)
             }
-            box(KITCHEN_SIZE)
+            fill(255, 128, 128)
+            scale(KITCHEN_SIZE / 100)
+            model(HEALTH_OBJ)
         pop()
     }
 
@@ -77,12 +81,16 @@ class TomatoKitchen extends Kitchen {
         push()
             super.render()
             translate(this.pos)
-            if (this.isOn()) {
-                fill(255, 0, 0)
+            rotateX(PI)
+            if (!this.isOn()) {
+                tint(128)
             } else {
-                fill (255 / 2, 0, 0)
+                translate(0, sin(frameCount / 20) * 10, 0)
+                rotateY(frameCount / 20)
             }
-            box(KITCHEN_SIZE)
+            scale(KITCHEN_SIZE / 100)
+            texture(TOMATO_PNG)
+            model(TOMATO_OBJ)
         pop()
     }
 
