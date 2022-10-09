@@ -258,9 +258,9 @@ function setup() {
       }
 
       if (data.events[i].type === "PlayerChangeWeapon") {
-        console.log("got change " + data.events[i].weapon + " " + data.events[i].id)
+        //console.log("got change " + data.events[i].weapon + " " + data.events[i].id)
         let player = findPlayer(data.events[i].id)
-        console.log(player.id);
+        //console.log(player.id);
         player.changeWeapon(data.events[i].weapon)
       }
     }
@@ -328,7 +328,7 @@ function updateGamestate() {
     ctfTimer--
   }
 
-  console.log(teamPoints)
+  //console.log(teamPoints)
 
   let winner = getWinner()
   let player = findPlayer(socket.id)
@@ -357,7 +357,7 @@ function doCollisionMovePlayers() {
       ) {
         let isReflected = false
         if (players[j].weapon === PLATE) {
-          console.log(players[j].id + " relected");
+          //console.log(players[j].id + " relected");
           let incomingAngle = players[j].get2dLooking().angleBetween(
             createVector(-projectiles[i].vel.x, -projectiles[i].vel.z)
           )
