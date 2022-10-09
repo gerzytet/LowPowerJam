@@ -8,8 +8,6 @@
 
 /*
 TODO:
-!Add all sounds and fix UI
-*List of players
 *Optimize performance
 *Win/lose condition
 *Disconnect (lobby is cleared out when there are zero clients)
@@ -392,6 +390,7 @@ function doCollisionMovePlayers() {
         }
         if (!isReflected) {
           
+          //
           if (projectiles[i] instanceof SpoonProjectile){
             var smackSound = new Howl({
               src: [sounds[3]],
