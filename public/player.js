@@ -98,10 +98,10 @@ class Player {
   }
 
   myView() {
-    cam.setPosition(this.pos.x, this.pos.y, this.pos.z);
+    cam.setPosition(this.pos.x, this.pos.y - 25, this.pos.z);
     cam.lookAt(
       this.pos.x + this.looking.x,
-      this.pos.y + this.looking.y,
+      this.pos.y - 25 + this.looking.y,
       this.pos.z + this.looking.z
     );
   }
@@ -145,7 +145,7 @@ class Player {
       console.log("SPOON sent from " + socket.id)
     }
 
-    if (keyIsDown(32) && this.pos.y == GROUND + PLAYER_SIZE / 2) {
+    if (keyIsDown(32) && this.pos.y == GROUND + PLAYER_SIZE / 4) {
       vy = -8
     }
 
@@ -197,9 +197,9 @@ class Player {
 
     this.vel.y += this.accY;
     this.pos.y += this.vel.y;
-    if (this.pos.y >= GROUND + PLAYER_SIZE / 2) {
+    if (this.pos.y >= GROUND + PLAYER_SIZE / 4) {
       this.vel.y = 0
-      this.pos.y = GROUND + PLAYER_SIZE / 2
+      this.pos.y = GROUND + PLAYER_SIZE / 4
     }
 
     this.deathTimer--
