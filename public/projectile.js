@@ -33,6 +33,7 @@ class Projectile {
       rotateY(this.yr)
       rotateZ(this.zr)
       scale(this.size / 100)
+      texture(TOMATO_PNG);
       model(TOMATO_OBJ)
     pop()
   }

@@ -129,10 +129,12 @@ function mouseMoved(event) {
 }
 
 let TOMATO_OBJ
+let TOMATO_PNG
 let SPOON_OBJ
 let CHARECTER_OBJ
 function preload(){
   TOMATO_OBJ = loadModel('models/Tomato.obj', true);
+  TOMATO_PNG = loadImage('images/tomato_mat.png', true);
   SPOON_OBJ = loadModel('models/spoon.obj', true);
   CHARECTER_OBJ = loadModel('models/Player.obj', true);
 }
@@ -540,7 +542,7 @@ function drawGame() {
   pop();
 
   push()
-    fill(0, 0, 0, 100)
+    fill(155, 50, 0, 100)
     rotateX(PI/2)
     translate(0, GROUND, 0)
     plane(2000, 2000)
