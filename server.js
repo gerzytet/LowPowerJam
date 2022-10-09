@@ -172,7 +172,6 @@ function newConnection(socket) {
           name: lobbies[lobbyIndex].names[players[i]]
         })
       } else {
-        console.log("starting FFA")
         events[lobbyIndex].push({
           type: "PlayerJoin",
           id: players[i],

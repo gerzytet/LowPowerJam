@@ -52,6 +52,7 @@ let myLobbyIndex = -1
 const renderColliders = true
 const CTF_TIME_LIMIT = 90 * 30
 const CTF_WIN_POINTS = 30 * 30
+const FFA_KILLS_TO_WIN = 5
 
 /******GAMESTATE ZONE*****/
 let players = []
@@ -140,11 +141,13 @@ let SPOON_OBJ
 let PLAYER_OBJ
 let PLAYER_PNG
 let PLATE_OBJ
+let DROPPED_BATTERY_OBJ
 function preload(){
   TOMATO_OBJ = loadModel('models/Tomato2.obj', true);
   TOMATO_PNG = loadImage('images/tomato_mat.png');
   SPOON_OBJ = loadModel('models/spoon.obj', true);
   PLATE_OBJ = loadModel('models/Plate.obj', true);
+  DROPPED_BATTERY_OBJ = loadModel('models/DroppedBattery.obj', true);
 
   PLAYER_OBJ = loadModel('models/Player.obj', true);
   PLAYER_PNG = loadImage('images/player_mat.png');
@@ -798,7 +801,7 @@ function getWinner() {
     }
     
     for (let i = 0; i < players.length; i++) {
-      if (players[i].kills >= 1) {
+      if (players[i].kills >= FFA_KILLS_TO_WIN) {
         return players[i]
       }
     }

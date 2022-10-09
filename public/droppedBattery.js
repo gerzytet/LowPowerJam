@@ -11,7 +11,7 @@ class DroppedBattery {
         push()
             translate(this.pos)
             fill(0, 255, 0)
-            box(BATTERY_SLOT_SIZE)
+            scale(BATTERY_SLOT_SIZE)
         pop()
     }
 }

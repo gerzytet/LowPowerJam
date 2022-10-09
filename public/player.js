@@ -204,7 +204,7 @@ class Player {
   }
 
   setTomatoInterference(n) {
-    this.speed = PLAYER_SPEED * (1 - (n / 5))
+    this.speed = PLAYER_SPEED * pow(0.8, n)
   }
 
   move() {
@@ -269,7 +269,7 @@ class Player {
       //return new SphereCollider(this.pos.copy(), PLAYER_SIZE * 0.8)
       return new CompositieCollider(
         [new SphereCollider(this.pos.copy(), PLAYER_SIZE * 0.3),
-        new SphereCollider(this.pos.copy().add(0, 20, 0), PLAYER_SIZE * 0.3),
+        new SphereCollider(this.pos.copy().add(0, 30, 0), PLAYER_SIZE * 0.3),
         new SphereCollider(this.pos.copy().add(0, -20, 0), PLAYER_SIZE * 0.3)]
       )
     }
