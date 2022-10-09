@@ -102,6 +102,18 @@ class Player {
         textFont(MC_FONT)
         textAlign(CENTER)
         text(this.name, 0, 0, 0)
+        
+        if(findPlayer(socket.id).get2dLooking().heading() <= 0){
+          translate(findPlayer(socket.id).looking.x, -12, findPlayer(socket.id).looking.z);
+        }
+        else{
+          translate(-1*findPlayer(socket.id).looking.x, -12, -1*findPlayer(socket.id).looking.z);
+        }
+        
+        fill(51,221,255);
+        stroke(0);
+        plane(22*this.name.length, 26);
+        
       pop()
     }
 
