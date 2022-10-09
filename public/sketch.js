@@ -792,7 +792,7 @@ function drawLobbySelect() {
 
 let mainMenuHtml;
 function setupMainMenu() {
-  console.log('Clicked');
+  WinScreenCounter = 0;
   mainMenuHtml = document.getElementById("Main_Menu_Div");
   mainMenuHtml.style.display = "block";
   if(Win_div != null){Win_div.style.display = "none";}
@@ -851,6 +851,7 @@ function getWinner() {
 }
 
 let Win_div;
+let WinScreenCounter = 0;
 function setupGameOver() {
   /*noCanvas()
   cnv = createCanvas(20, 20);
