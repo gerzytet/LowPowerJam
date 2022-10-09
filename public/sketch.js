@@ -5,6 +5,7 @@
 @brief File that renders graphics
 */
 
+
 /*
 TODO:
 !Add all sounds and fix UI
@@ -49,6 +50,8 @@ const YOU_LOSE = 5
 let menuState = MAIN_MENU
 let myLobbyIndex = -1
 const renderColliders = false
+const CTF_TIME_LIMIT = 10 * 30
+const CTF_WIN_POINTS = 200
 
 /******GAMESTATE ZONE*****/
 let players = []
@@ -67,6 +70,7 @@ let pointerLock
 let playersLastLength = 1;
 
 let gameMode
+let teamPoints
 
 function windowResized() {
   cnv = resizeCanvas(windowWidth - 40, windowHeight - 80);
@@ -86,10 +90,6 @@ document.addEventListener(
   },
   false
 );
-
-document.addEventListener(
-  "keydown", function(event){event.preventDefault()}
-)
 
 function findPlayer(id) {
   for (let i = 0; i < players.length; i++) {
@@ -150,6 +150,7 @@ function preload(){
 }
 
 function setup() {
+  teamPoints = [0, 0]
   lastID = 0
   socket = io.connect()
   lobbies = []
@@ -159,8 +160,12 @@ function setup() {
 
   socket.on("tick", function (data) {
     for (let i = 0; i < data.events.length; i++) {
+      if (data.events[i].type === "GameMode") {
+        gameMode = data.events[i].gameMode
+      }
       if (data.events[i].type === "PlayerJoin") {
-        players.push(new Player(data.events[i].id, spawnPoint.x, spawnPoint.y, spawnPoint.z));
+        let team = data.events[i].team
+        players.push(new Player(data.events[i].id, spawnPoints[team % 2].x, spawnPoints[team % 2].y, spawnPoints[team % 2].z, data.events[i].team));
       }
       if (
         data.events[i].type === "CatchingUpNewPlayer" &&
@@ -303,7 +308,7 @@ function setup() {
   socket.on("lobbyStatus", function (data) {
     lobbies = [];
     for (var i = 0; i < data.lobbies.length; i++) {
-      lobbies.push(new Lobby(data.lobbies[i].players, data.lobbies[i].status, data.lobbies[i].teams, data.lobbies[i].gameMode));
+      lobbies.push(new Lobby(data.lobbies[i].players, data.lobbies[i].status, data.lobbies[i].teams, data.lobbies[i].names, data.lobbies[i].gameMode));
     }
   })
 
@@ -314,6 +319,7 @@ function setup() {
   })
 
   setupMainMenu();
+  //setupLobbySelect()
 }
 
 //0-1 scale, sound is louder when distance is shorter
@@ -335,24 +341,7 @@ function loadMap(index) {
       console.log("HI")
     }
   }
-  spawnPoint = map.playerSpawn
-}
-
-function loadMap(index) {
-  console.log("Loading map " + index)
-  let map = maps[index]
-  for (let i = 0; i < map.objects.length; i++) {
-    let object = map.objects[i]
-    if (object instanceof Wall) {
-      walls.push(object)
-    }
-    else if (object instanceof Kitchen) {
-      kitchens.push(object)
-    } else {
-      console.log("HI")
-    }
-  }
-  spawnPoint = map.playerSpawn
+  spawnPoints = map.playerSpawn
 }
 
 function updateGamestate() {
@@ -365,9 +354,25 @@ function updateGamestate() {
 
   doCollisionMovePlayers()
 
+  //do team points
+  if (gameMode === MODE_CTF) {
+    for (var i = 0; i < kitchens.length; i++) {
+      if (kitchens[i].isOn() && kitchens[i].hasBatterySlot()) {
+        teamPoints[kitchens[i].team]++
+      }
+    }
+  }
+
+  console.log(teamPoints)
+
   let winner = getWinner()
+  let player = findPlayer(socket.id)
   if (winner !== null) {
-    if (winner.id === socket.id) {
+    let won = (
+      gameMode === MODE_CTF && winner === player.team ||
+      gameMode === MODE_FFA && winner.id === socket.id
+    )
+    if (won) {
       menuState = YOU_WIN
       setupGameOver()
     } else {
@@ -382,7 +387,7 @@ function doCollisionMovePlayers() {
   for (var i = 0; i < projectiles.length; i++) {
     for (var j = 0; j < players.length; j++) {
       if (
-        projectiles[i].owner !== players[j].id &&
+        projectiles[i].team !== players[j].team &&
         projectiles[i].getCollider().isColliding(players[j].getCollider())
       ) {
         let isReflected = false
@@ -524,6 +529,10 @@ function setupGame() {
   cnv.parent("sketch-container");
   windowResized();
 
+  document.addEventListener(
+    "keydown", function(event){event.preventDefault()}
+  )
+
   cam = createCamera();
   normalMaterial();
   let eyeZ = height / 2 / tan(PI / 6);
@@ -662,7 +671,8 @@ function drawLobby() {
   y += 32;
   for (let i = 0; i < lobbies[myLobbyIndex].players.length; i++) {
     push()
-      let id = lobbies[myLobbyIndex].players[i]
+      let id = lobbies[myLobbyIndex].players[i];
+      let name = lobbies[myLobbyIndex].names[id];
       if (lobbies[myLobbyIndex].gameMode === MODE_CTF) {
         if (lobbies[myLobbyIndex].teams[id] == 0) {
           fill(255, 0, 0)
@@ -670,7 +680,7 @@ function drawLobby() {
           fill(0, 0, 255)
         }
       }
-      text(id, x, y);
+      text(name, x, y);
       y += 32;
     pop()
   }
@@ -708,6 +718,7 @@ function setupLobbySelect() {
   cnv = createCanvas(20, 20);
   cnv.parent("sketch-container");
   windowResized();
+  mainMenuHtml.style.visibility = "hidden";
 }
 
 function joinLobby(n) {
@@ -716,6 +727,9 @@ function joinLobby(n) {
   });
   menuState = LOBBY;
   myLobbyIndex = n;
+  socket.emit("changeName", {
+    name: document.getElementById("name_input").value
+  });
 }
 
 function doLobbySelectInput() {
@@ -755,10 +769,10 @@ function drawLobbySelect() {
   doLobbySelectInput();
 }
 
+let mainMenuHtml;
 function setupMainMenu() {
-  cnv = createCanvas(20, 20);
-  cnv.parent("sketch-container");
-  windowResized();
+  mainMenuHtml = document.getElementById("Main_Menu_Div");
+  mainMenuHtml.style.visibility = "visible";
 }
 
 function doMainMenuInput() {
@@ -769,31 +783,40 @@ function doMainMenuInput() {
 }
 
 function drawMainMenu() {
-  push();
-  background(100);
-  textSize(32);
-  text("Main menu", 10, 30);
-  text("Press s to start", 10, 70);
-  pop();
-
-  doMainMenuInput();
+  //mainMenuHtml.style.visibility = "visible";
 }
 
 function getWinner() {
-  if (players.length === 0) {
-    return null;
-  }
-  if (players.length === 1) {
-    return players[0];
-  }
-  
-  for (let i = 0; i < players.length; i++) {
-    if (players[i].kills >= 1) {
-      return players[i]
+  if (gameMode === MODE_FFA) {
+    if (players.length === 0) {
+      return null;
     }
-  }
+    if (players.length === 1) {
+      return players[0];
+    }
+    
+    for (let i = 0; i < players.length; i++) {
+      if (players[i].kills >= 1) {
+        return players[i]
+      }
+    }
+    return null
+  } else {
+    if (players.length === 0) {
+      return null;
+    }
+    if (players.length === 1) {
+      return players[0].team;
+    }
 
-  return null
+    if (teamPoints[0] > teamPoints[1] && teamPoints[0] >= CTF_WIN_POINTS) {
+      return 0
+    } else if (teamPoints[1] > teamPoints[0] && teamPoints[1] >= CTF_WIN_POINTS) {
+      return 1
+    }
+    
+    return null
+  }
 }
 
 function setupGameOver() {

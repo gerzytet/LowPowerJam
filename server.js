@@ -10,6 +10,8 @@ var socket = require("socket.io")
 var Lobby = require("./lobby.js")
 const LOBBY_OPEN = Lobby.LOBBY_OPEN
 const LOBBY_STARTED = Lobby.LOBBY_STARTED
+const MODE_CTF = Lobby.MODE_CTF
+const MODE_FFA = Lobby.MODE_FFA
 Lobby = Lobby.Lobby
 var lastGameState
 var lastGameStateID = 0
@@ -20,7 +22,7 @@ const numLobies = 6
 var lobbies = []
 var events = []
 for (var i = 0; i < numLobies; i++) {
-  lobbies.push(new Lobby([], LOBBY_OPEN, {}))
+  lobbies.push(new Lobby([], LOBBY_OPEN, {}, {}))
   events.push([])
 }
 
@@ -83,6 +85,7 @@ function newConnection(socket) {
   socket.on('checkConsistency', checkConsistency)
   socket.on('changeGameMode', changeGameMode)
   socket.on('switchTeam', switchTeam)
+  socket.on('changeName', changeName)
 
   socket.on("disconnect", Disconnect);
   
@@ -157,10 +160,24 @@ function newConnection(socket) {
       s.leave("lobby")
       s.join("game" + lobbyIndex)
       events[lobbyIndex].push({
-        type: "PlayerJoin",
-        id: players[i],
-        team: lobbies[lobbyIndex].teams[players[i]]
+        type: "GameMode",
+        gameMode: lobbies[lobbyIndex].gameMode
       })
+
+      if (lobbies[lobbyIndex].gameMode === MODE_CTF) {
+        events[lobbyIndex].push({
+          type: "PlayerJoin",
+          id: players[i],
+          team: lobbies[lobbyIndex].teams[players[i]]
+        })
+      } else {
+        console.log("starting FFA")
+        events[lobbyIndex].push({
+          type: "PlayerJoin",
+          id: players[i],
+          team: i
+        })
+      }
     }
     io.to("game" + lobbyIndex).emit("startGame", {
       map: data.map
@@ -217,6 +234,15 @@ function newConnection(socket) {
     let lobbyIndex = getLobbyIndex(player)
     if (lobbyIndex === -1) return
     lobbies[lobbyIndex].teams[player] = 1-lobbies[lobbyIndex].teams[player] 
+  }
+
+  function changeName(data) {
+    let player = socket.id
+    let lobbyIndex = getLobbyIndex(player)
+    console.log(lobbyIndex)
+    if (lobbyIndex === -1) return
+    lobbies[lobbyIndex].names[player] = data.name;
+    console.log(lobbies[lobbyIndex].names)
   }
 }
 

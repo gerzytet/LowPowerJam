@@ -8,7 +8,7 @@
 const PROJECTILE_SIZE = 10;
 
 class Projectile {
-  constructor(pos, vel, owner) {
+  constructor(pos, vel, owner, team) {
     this.pos = pos
     this.vel = vel
     this.owner = owner
@@ -24,6 +24,7 @@ class Projectile {
     this.zrv = random(-0.1, 0.1)
 
     this.dead = false
+    this.team = team
   }
 
   render() {
@@ -88,11 +89,12 @@ const SPOON_SIZE = 10
 const SPOON_TIMEOUT = 10
 
 class SpoonProjectile {
-  constructor(owner) {
+  constructor(owner, team) {
     this.owner = owner
     this.move()
     this.dead = false
     this.timer = 10
+    this.team = team
   }
 
   getPlayer() {

@@ -79,3 +79,11 @@ function updateUI(id){
     }
     
 }
+
+function playButtonFunc() {
+    let name = document.getElementById("name_input").value;
+    if(name != ""){
+        menuState = LOBBY_SELECT;
+        setupLobbySelect();
+    }
+}

@@ -9,13 +9,27 @@ const KITCHEN_RADIUS = 120
 const KITCHEN_SIZE = 30
 
 class Kitchen {
-    constructor(pos, batterySlot) {
+    constructor(pos, batterySlot, team) {
         this.pos = pos
         this.batterySlot = batterySlot
+        this.team = team;
     }
 
     render() {
         this.batterySlot.render()
+        push();
+        translate(this.pos.x, this.pos.y - 50, this.pos.z);
+        if(this.team == 0){
+        fill(255, 0, 0);
+        }
+        else if(this.team == 1){
+        fill(0, 0, 255);
+        }
+        else{
+        fill(this.team * 25);
+        }
+        sphere(5);
+        pop();
     }
 
     getCollider() {
@@ -32,8 +46,8 @@ class Kitchen {
 }
 
 class HealthKitchen extends Kitchen {
-    constructor(pos, batterySlot) {
-        super(pos, batterySlot)
+    constructor(pos, batterySlot, team) {
+        super(pos, batterySlot, team)
     }
 
     render() {
@@ -55,8 +69,8 @@ class HealthKitchen extends Kitchen {
 }
 
 class TomatoKitchen extends Kitchen {
-    constructor(pos, batterySlot) {
-        super(pos, batterySlot)
+    constructor(pos, batterySlot, team) {
+        super(pos, batterySlot, team)
     }
 
     render() {

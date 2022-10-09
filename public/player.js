@@ -70,6 +70,20 @@ class Player {
       model(PLAYER_OBJ);
     pop();
 
+    push();
+    translate(this.pos.x, this.pos.y - 50, this.pos.z);
+    if(this.team == 0){
+      fill(255, 0, 0);
+    }
+    else if(this.team == 1){
+      fill(0, 0, 255);
+    }
+    else{
+      fill(this.team * 25);
+    }
+    sphere(5);
+    pop();
+
     if (this.weapon === PLATE) {
       push();
         translate(createVector(this.pos.x, this.pos.y - 30, this.pos.z).add(this.looking.copy().mult(20)));
@@ -237,12 +251,13 @@ class Player {
 
   getShootProjectile() {
     if (this.weapon === SPOON) {
-      return new SpoonProjectile(this.id)
+      return new SpoonProjectile(this.id, this.team)
     }
     return new Projectile(
       this.pos.copy().add(0, -25, 0).add(this.looking.copy().mult(20)),
       this.looking.copy().mult(PROJECTILE_SPEED),
-      this.id
+      this.id,
+      this.team
     )
   }
 

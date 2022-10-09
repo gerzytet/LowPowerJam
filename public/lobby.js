@@ -12,10 +12,11 @@ const MODE_FFA = 0
 const MODE_CTF = 1
 
 class Lobby {
-    constructor(players, status, teams, gameMode = MODE_FFA) {
+    constructor(players, status, teams, names, gameMode = MODE_FFA) {
         this.status = status
         this.players = players
         this.gameMode = gameMode
         this.teams = teams
+        this.names = names
     }
 }
