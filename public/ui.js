@@ -59,17 +59,17 @@ function updateUI(id){
         }
         
         if(player.isDead()){
-            Death_Counter.style.visibility = "visible";
+            Death_Counter.style.display = "block";
             Death_Counter.innerHTML = "<p>You are dead!</p> <p>Respawning in " + floor(player.deathTimer/30) + "</p>";
         }
         else{
-            Death_Counter.style.visibility = "hidden";
+            Death_Counter.style.display = "none";
         }
     }
 
     let playerList = document.getElementById("Player_list");
     if(tab_bool){
-        playerList.style.visibility = "visible";
+        playerList.style.display = "block";
         let tempStr;
         if(gameMode === MODE_CTF){
             tempStr = "<table style='width:100%;'>"
@@ -89,7 +89,7 @@ function updateUI(id){
         playerList.innerHTML = tempStr;
     }
     else{
-        playerList.style.visibility = "hidden";
+        playerList.style.display = "none";
     }
     
 }
