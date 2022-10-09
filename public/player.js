@@ -102,14 +102,7 @@ class Player {
         textFont(MC_FONT)
         textAlign(CENTER)
         text(this.name, 0, 0)
-      pop()
 
-      push()
-        fill(255, 0, 0)
-        translate(this.pos.copy().sub(0, 50, 0))
-        rotateY(-cameraAngle)
-        box(10, 10, lerp(0, 100, this.health / PLAYER_MAX_HEALTH))
-        
         if(findPlayer(socket.id).get2dLooking().heading() <= 0){
           translate(findPlayer(socket.id).looking.x, -12, findPlayer(socket.id).looking.z);
         }
@@ -118,9 +111,15 @@ class Player {
         }
         
         fill(51,221,255);
-        stroke(0);
+        //stroke(0);
         plane(22*this.name.length, 26);
-        
+      pop()
+
+      push()
+        fill(255, 0, 0)
+        translate(this.pos.copy().sub(0, 50, 0))
+        rotateY(-cameraAngle)
+        box(10, 10, lerp(0, 100, this.health / PLAYER_MAX_HEALTH))
       pop()
     }
 
