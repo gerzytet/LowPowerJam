@@ -7,15 +7,16 @@
 
 /*
 TODO:
+!Add all sounds and fix UI
 *List of players
-*Health/Death
 *Optimize performance
 *Win/lose condition
 *Disconnect (lobby is cleared out when there are zero clients)
 */
 
-//!Need splat sounds, music, interact sounds, menu sounds.
-var sounds = ['sounds/laserBeam.mp3'];
+//Interact = Clicking UI, Smack = Spoon collision, Splat = Tomato collision, Swish = Spoon failed collision
+var sounds = ['sounds/interact.mp3', 'sounds/low_throw.mp3', 'sounds/medium_throw.mp3', 'sounds/high_throw.mp3', 'sounds/smack.mp3', 'sounds/splat.mp3', 
+'sounds/swish.mp3'];
 
 /*
 var testSound = new Howl({
@@ -135,14 +136,17 @@ function mouseMoved(event) {
 let TOMATO_OBJ
 let TOMATO_PNG
 let SPOON_OBJ
-let CHARECTER_OBJ
+let PLAYER_OBJ
+let PLAYER_PNG
 let PLATE_OBJ
 function preload(){
-  TOMATO_OBJ = loadModel('models/Tomato.obj', true);
-  TOMATO_PNG = loadImage('images/tomato_mat.png', true);
+  TOMATO_OBJ = loadModel('models/Tomato2.obj', true);
+  TOMATO_PNG = loadImage('images/tomato_mat.png');
   SPOON_OBJ = loadModel('models/spoon.obj', true);
   PLATE_OBJ = loadModel('models/Plate.obj', true);
-  CHARECTER_OBJ = loadModel('models/Player.obj', true);
+
+  PLAYER_OBJ = loadModel('models/Player.obj', true);
+  PLAYER_PNG = loadImage('images/player_mat.png');
 }
 
 function setup() {
@@ -236,12 +240,32 @@ function setup() {
           }
         }
 
-        var testSound = new Howl({
-          src: [sounds[0]],
+        var lowThrow = new Howl({
+          src: [sounds[1]],
           loop: false,
           volume: volume
         })
-        testSound.play();
+        var mediumThrow = new Howl({
+          src: [sounds[2]],
+          loop: false,
+          volume: volume
+        })
+        var highThrow = new Howl({
+          src: [sounds[3]],
+          loop: false,
+          volume: volume
+        })
+        
+        //hive mind code
+        //60% chance normal, 20% high, 20% low
+        var r = Math.random()
+        if (r < 0.20) {
+          lowThrow.play();
+        } else if (r < 0.40) {
+          mediumThrow.play();
+        } else {
+          highThrow.play();
+        }
       }
 
       if (data.events[i].type === "PlayerPickupBattery") {
@@ -570,7 +594,6 @@ function drawGame() {
     droppedBatteries[i].render()
   }
 
-
   push();
     translate(0, 0, 0);
     fill(0);
@@ -582,7 +605,7 @@ function drawGame() {
     fill(155, 50, 0, 100)
     rotateX(PI/2)
     translate(0, GROUND, 0)
-    plane(2000, 2000)
+    plane(3000, 3000)
   pop()
   updateUI(socket.id);
 }

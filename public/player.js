@@ -62,6 +62,7 @@ class Player {
       translate(this.pos);
       rotateY(-1 * this.get2dLooking().heading());
       rotateZ(PI);
+<<<<<<< HEAD
       fill(255 * (this.health / PLAYER_MAX_HEALTH), 0, 255 * (this.health / PLAYER_MAX_HEALTH));
       stroke(255);
       scale(0.38);
@@ -76,6 +77,14 @@ class Player {
       );
       fill(0);
       sphere(3);
+=======
+      tint(255 * (this.health/PLAYER_MAX_HEALTH));
+      texture(PLAYER_PNG);
+      noStroke();
+      //box(PLAYER_SIZE);
+      scale(0.38);
+      model(PLAYER_OBJ);
+>>>>>>> 86156f0770742ae4b74b7baa4d2898cb07bde546
     pop();
 
     if (this.weapon === PLATE) {
