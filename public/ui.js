@@ -5,6 +5,10 @@
 @brief UI stuff
 */
 
+var uiSounds = ['sounds/interact.mp3'];
+
+
+
 var tab_bool = false;
 
 function updateUI(id){
@@ -24,12 +28,9 @@ function updateUI(id){
     Health_Bar.max = PLAYER_MAX_HEALTH;
     let Death_Counter = document.getElementById("Death_Counter");
 
-
-
     let Tomato_Block= document.getElementById("Tomato_Block");
     let Plate_Block= document.getElementById("Plate_Block");
     let Spoon_Block= document.getElementById("Spoon_Block");
-    
     
     if(player != undefined){
         Tomato_Block.innerHTML = '<p id="W1">1</p><img id="tImg" src="images/Tomato.png"></img><p id="ammoCounter">'+ceil(player.ammo)+'</p>';
@@ -95,6 +96,13 @@ function updateUI(id){
 }
 
 function playButtonFunc() {
+    var interactSound = new Howl({
+        src: [uiSounds[0]],
+        loop: false,
+        volume: 0.5
+    });
+    interactSound.play();
+    
     let name = document.getElementById("name_input").value;
     if(name != ""){
         menuState = LOBBY_SELECT;
