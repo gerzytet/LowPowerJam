@@ -16,6 +16,7 @@ const PLAYER_GRAVITY = 0.4
 const BATTERY_TIMER = 80
 const RESPAWN_TIMER = 100
 const PLAYER_SPEED = 3
+const JUMP_STRENGTH = 6
 
 const TOMATO = 1
 const PLATE = 2
@@ -142,7 +143,7 @@ class Player {
     let vz = 0;
 
     if (keyIsDown(87)) {
-      vz = this.speed;
+      vz = this.speed * 1.3;
     } else if (keyIsDown(83)) {
       vz = -this.speed;
     } else {
@@ -167,7 +168,7 @@ class Player {
     }
 
     if (keyIsDown(32) && this.pos.y == GROUND + PLAYER_SIZE / 4) {
-      vy = -8
+      vy = -JUMP_STRENGTH
     }
 
     if(keyIsDown(9)){
@@ -255,7 +256,7 @@ class Player {
     }
     return new Projectile(
       this.pos.copy().add(0, -25, 0).add(this.looking.copy().mult(20)),
-      this.looking.copy().mult(PROJECTILE_SPEED),
+      this.looking.copy().mult(PROJECTILE_SPEED * PROJECTILE_SPEED_MULTIPLIER),
       this.id,
       this.team
     )
@@ -265,7 +266,12 @@ class Player {
     if (this.isDead()) {
       return new NullCollider()
     } else {
-      return new SphereCollider(this.pos.copy(), PLAYER_SIZE * 0.8)
+      //return new SphereCollider(this.pos.copy(), PLAYER_SIZE * 0.8)
+      return new CompositieCollider(
+        [new SphereCollider(this.pos.copy(), PLAYER_SIZE * 0.3),
+        new SphereCollider(this.pos.copy().add(0, 20, 0), PLAYER_SIZE * 0.3),
+        new SphereCollider(this.pos.copy().add(0, -20, 0), PLAYER_SIZE * 0.3)]
+      )
     }
   }
 

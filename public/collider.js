@@ -17,6 +17,8 @@ class SphereCollider {
             return dist <= this.size + other.size
         } else if (other instanceof WallCollider) {
             return other.isColliding(this)
+        } else if (other instanceof CompositieCollider) {
+            return other.isColliding(this)
         }
         return false
     }
@@ -51,6 +53,8 @@ class WallCollider {
     isColliding(other) {
         if (other instanceof WallCollider) {
             throw new Error("Not implemented")
+        } else if (other instanceof CompositieCollider) {
+            return other.isColliding(this)
         } else if (other instanceof SphereCollider) {
             if (other.pos.y < -this.height) {
                 return false
@@ -159,4 +163,25 @@ class NullCollider {
     }
 
     render() {}
+}
+
+class CompositieCollider {
+    constructor(colliders) {
+        this.colliders = colliders
+    }
+
+    isColliding(other) {
+        for (let i = 0; i < this.colliders.length; i++) {
+            if (this.colliders[i].isColliding(other)) {
+                return true
+            }
+        }
+        return false
+    }
+
+    render() {
+        for (let i = 0; i < this.colliders.length; i++) {
+            this.colliders[i].render()
+        }
+    }
 }

@@ -19,24 +19,23 @@ function cv2(x, y) {
 function initMaps() {
     const GROUND = -50
 
-    maps.push(
-        {
-            playerSpawn: [createVector(100, GROUND, 100),createVector(1000, GROUND, 1000)],
-            name: "Free-for-all map",
-            objects: [
-                //walls use cv2, kitchen uses cv. Both take in 2 (x,y) coordinates, slope should be -1
-                new Wall(cv2(-200, -200), cv2(1200, -200)),
-                new Wall(cv2(-200, -200), cv2(-200, 1200)),
-                new Wall(cv2(1200, -200), cv2(1200, 1200)),
-                new Wall(cv2(-200, 1200), cv2(1200, 1200)),
-    
-                new TomatoKitchen(cv(1000, 0), new BatterySlot(cv(800, 200), true), 0),
-                new TomatoKitchen(cv(0, 1000), new BatterySlot(cv(200, 800), true), 1),
-    
-                //diagonals
-                new Wall(cv2(800, 0), cv2(1200, 400)),
-                new Wall(cv2(0, 800), cv2(400, 1200))
-            ],
+    maps.push({
+        playerSpawn: [createVector(100, GROUND, 100),createVector(1000, GROUND, 1000)],
+        name: "Free-for-all map",
+        objects: [
+            //walls use cv2, kitchen uses cv. Both take in 2 (x,y) coordinates, slope should be -1
+            new Wall(cv2(-200, -200), cv2(1200, -200)),
+            new Wall(cv2(-200, -200), cv2(-200, 1200)),
+            new Wall(cv2(1200, -200), cv2(1200, 1200)),
+            new Wall(cv2(-200, 1200), cv2(1200, 1200)),
+
+            new TomatoKitchen(cv(1000, 0), new BatterySlot(cv(800, 200), true), 0),
+            new TomatoKitchen(cv(0, 1000), new BatterySlot(cv(200, 800), true), 1),
+
+            //diagonals
+            new Wall(cv2(800, 0), cv2(1200, 400)),
+            new Wall(cv2(0, 800), cv2(400, 1200))
+        ],
     })
 
     maps.push(

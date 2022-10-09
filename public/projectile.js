@@ -6,13 +6,14 @@
 */
 
 const PROJECTILE_SIZE = 10;
+const PROJECTILE_SPEED_MULTIPLIER = 3
 
 class Projectile {
   constructor(pos, vel, owner, team) {
     this.pos = pos
     this.vel = vel
     this.owner = owner
-    this.acc = 0.03
+    this.acc = 0.03 * PROJECTILE_SPEED_MULTIPLIER
     this.size = PROJECTILE_SIZE + random(-2, 2)
 
     this.xr = random(-3, 3)

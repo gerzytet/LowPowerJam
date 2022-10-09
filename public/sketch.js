@@ -49,7 +49,7 @@ const YOU_WIN = 4
 const YOU_LOSE = 5
 let menuState = MAIN_MENU
 let myLobbyIndex = -1
-const renderColliders = false
+const renderColliders = true
 const CTF_TIME_LIMIT = 90 * 30
 const CTF_WIN_POINTS = 30 * 30
 
@@ -364,8 +364,8 @@ function doCollisionMovePlayers() {
           if (abs(incomingAngle) < PI / 4) {
             let reflected = players[j].getShootProjectile()
             projectiles[i].vel = reflected.vel
-            projectiles[i].pos = reflected.pos
             projectiles[i].owner = reflected.owner
+            projectiles[i].team = reflected.team
             isReflected = true
           }
         }
