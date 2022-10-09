@@ -74,7 +74,7 @@ let teamPoints
 let ctfTimer = CTF_TIME_LIMIT
 
 function windowResized() {
-  cnv = resizeCanvas(windowWidth - 40, windowHeight - 80);
+  cnv = resizeCanvas(windowWidth - 50, windowHeight - 90);
 }
 
 document.addEventListener(
