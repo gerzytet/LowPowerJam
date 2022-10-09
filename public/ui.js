@@ -23,8 +23,25 @@ function updateUI(id){
     let Health_Bar = document.getElementById("Health_Bar");
     Health_Bar.max = PLAYER_MAX_HEALTH;
     let Death_Counter = document.getElementById("Death_Counter");
+
+
+
+    let Tomato_Block= document.getElementById("Tomato_Block");
+    let Plate_Block= document.getElementById("Plate_Block");
+    let Spoon_Block= document.getElementById("Spoon_Block");
+    
     
     if(player != undefined){
+        Tomato_Block.innerHTML = '<p id="W1">1</p><img id="tImg" src="images/Tomato.png"></img><p id="ammoCounter">'+player.ammo+'</p>';
+        if(player.weapon == TOMATO){
+            Tomato_Block.opasity = 1;
+            Plate_Block.opasity = .5;
+        }else if(player.weapon == PLATE){
+    
+        }else {
+    
+        }
+        
         if(player.shootTimer <= 0){
             tomato_timer.value = 0;
         }

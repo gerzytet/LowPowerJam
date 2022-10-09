@@ -61,21 +61,12 @@ class Player {
       translate(this.pos);
       rotateY(-1 * this.get2dLooking().heading());
       rotateZ(PI);
-      fill(255 * (this.health / PLAYER_MAX_HEALTH), 0, 255 * (this.health / PLAYER_MAX_HEALTH));
-      stroke(255);
+      tint(255 * (this.health/PLAYER_MAX_HEALTH));
+      texture(PLAYER_PNG);
+      noStroke();
       //box(PLAYER_SIZE);
       scale(0.38);
-      model(CHARECTER_OBJ);
-    pop();
-
-    push();
-    translate(
-      this.pos.x + this.looking.x * 10,
-      this.pos.y - 30,
-      this.pos.z + this.looking.z * 10
-    );
-    fill(0);
-    sphere(3);
+      model(PLAYER_OBJ);
     pop();
   }
 
