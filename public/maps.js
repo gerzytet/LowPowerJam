@@ -41,6 +41,8 @@ function initMaps() {
       //diagonals
       new Wall(cv2(800, 0), cv2(1200, 400), WALL_HEIGHT),
       new Wall(cv2(0, 800), cv2(400, 1200), WALL_HEIGHT),
+
+      new Tree(cv(500, 500))
     ],
   });
 

@@ -62,6 +62,7 @@ let droppedBatteries = []
 let kitchens = []
 let walls = []
 let spawnPoint
+let trees = []
 /**MAP ZONE*/
 
 let lobbies
@@ -142,10 +143,11 @@ let PLATE_OBJ
 let DROPPED_BATTERY_OBJ
 let HEALTH_OBJ
 let BATTERY_SLOT_OBJ;
+let TREE_OBJ
 let WALL_PNG;
 let FLOOR_PNG;
+let TREE_PNG
 
-let MC_FONT
 function preload(){
   TOMATO_OBJ = loadModel('models/Tomato2.obj', true)
   TOMATO_PNG = loadImage('images/tomato_mat.png')
@@ -153,6 +155,8 @@ function preload(){
   PLATE_OBJ = loadModel('models/Plate.obj', true)
   DROPPED_BATTERY_OBJ = loadModel('models/DroppedBattery.obj', true)
   HEALTH_OBJ = loadModel('models/Health.obj', true)
+  TREE_OBJ = loadModel('models/tree.obj', true)
+  TREE_PNG = loadImage('images/tree_mat.png')
 
   PLAYER_OBJ = loadModel('models/Player.obj', true)
   PLAYER_PNG = loadImage('images/player_mat.png')
@@ -328,6 +332,8 @@ function loadMap(index) {
     }
     else if (object instanceof Kitchen) {
       kitchens.push(object)
+    } else if (object instanceof Tree) {
+      trees.push(object)
     } else {
       console.log("HI")
     }
@@ -623,6 +629,10 @@ function drawGame() {
 
   for (let i = 0; i < droppedBatteries.length; i++) {
     droppedBatteries[i].render()
+  }
+
+  for (let i = 0; i < trees.length; i++) {
+    trees[i].render()
   }
 
   /* Jeremy
