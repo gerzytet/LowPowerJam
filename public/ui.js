@@ -32,14 +32,19 @@ function updateUI(id){
     
     
     if(player != undefined){
-        Tomato_Block.innerHTML = '<p id="W1">1</p><img id="tImg" src="images/Tomato.png"></img><p id="ammoCounter">'+player.ammo+'</p>';
+        Tomato_Block.innerHTML = '<p id="W1">1</p><img id="tImg" src="images/Tomato.png"></img><p id="ammoCounter">'+ceil(player.ammo)+'</p>';
         if(player.weapon == TOMATO){
-            Tomato_Block.opasity = 1;
-            Plate_Block.opasity = .5;
+            Tomato_Block.style.opacity = 1;
+            Plate_Block.style.opacity = .5;
+            Spoon_Block.style.opacity = .5;
         }else if(player.weapon == PLATE){
-    
+            Tomato_Block.style.opacity = .5;
+            Plate_Block.style.opacity = 1;
+            Spoon_Block.style.opacity = .5;
         }else {
-    
+            Tomato_Block.style.opacity = .5;
+            Plate_Block.style.opacity = .5;
+            Spoon_Block.style.opacity = 1;
         }
         
         if(player.shootTimer <= 0){
@@ -68,9 +73,9 @@ function updateUI(id){
         let tempStr;
         if(gameMode === MODE_CTF){
             tempStr = "<table style='width:100%;'>"
-            tempStr += "<tr><th style='width:50%'>Timer</th><th style='width:50%'>" + ctfTimer + "</th></tr>";
-            tempStr += "<tr><td style='width:50%'>Red Team Points</td><td style='width:50%'>" + teamPoints[0] + "/" + CTF_WIN_POINTS + "</td></tr>";
-            tempStr += "<tr><td style='width:50%'>Blue Team Points</td><td style='width:50%'>" + teamPoints[1] + "/" + CTF_WIN_POINTS + "</td></tr>";
+            tempStr += "<tr><th style='width:50%';>Timer</th><th style='width:50%'>" + ctfTimer + "</th></tr>";
+            tempStr += "<tr><td style='width:50%; background-color: red;'>Red Team Points</td><td style='width:50%; background-color: red;'>" + teamPoints[0] + "/" + CTF_WIN_POINTS + "</td></tr>";
+            tempStr += "<tr><td style='width:50%; background-color: blue;'>Blue Team Points</td><td style='width:50%; background-color: blue;'>" + teamPoints[1] + "/" + CTF_WIN_POINTS + "</td></tr>";
         }
         else if (gameMode === MODE_FFA){
             tempStr = "<table style='width:100%;'><tr><th style='width:33%'>Player</th><th style='width:33%'>Kills</th><th style='width:33%'>Deaths</th></tr>";
